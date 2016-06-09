@@ -12,7 +12,7 @@ echo "Environment: $environment";
 newline();
 
 // define the prefix of each log message
-$logType = '[data xport]'; 
+$logType = '[topic xport]'; 
 
 // get DB creds from forum config
 $f_username=$dbuser;
@@ -56,52 +56,67 @@ if (mysqli_connect_errno($aws_mysqli))
   echo "Failed to connect to AWS MySQL: " . mysqli_connect_error();
   } else { } ;
 
-$max_aws_topic_id = getMaxAWS();
-$next_forum_topic_id = getNextForum($max_aws_topic_id);
+$maxAWSTopicId = getMaxAWS();
+$nextForumTopicId = getNextForum($maxAWSTopicId);
 
-if($next_forum_topic_id > $max_aws_topic_id) {
+if($nextForumTopicId > $maxAWSTopicId) {
 	echo nl2br ("forum has new topic\n\n");
-	$topicDetails = getNextTopicDetails($next_forum_topic_id); 
-	insertTopic($topicDetails[0],$topicDetails[1],$topicDetails[2],$topicDetails[3],$topicDetails[4],$topicDetails[5]);
+	$topicDetails = getNextTopicDetails($nextForumTopicId); 
 };
 
 function getMaxAWS()
 {
 	global $forum_id, $aws_mysqli, $table_aws_topics, $f_database;
 	// get max topic_id from AWS topics - make sure its the same DB (xpilotspaws-forum, for ex)
-	$query_get_max_aws_topic = "SELECT max(topic_id) as max_topic_id from $table_aws_topics where forum_id = $forum_id and source_database = '$f_database'"; 
+	$query_get_max_aws_topic = "SELECT max(topic_id) as max_topic_id " .
+		" FROM $table_aws_topics " . 
+		" WHERE forum_id = $forum_id and source_database = '$f_database'" .
+		" HAVING max_topic_id IS NOT NULL" ; 
 	echo nl2br ("AWS max topic query: $query_get_max_aws_topic \n" ) ;
 	$result = $aws_mysqli->query($query_get_max_aws_topic) or die ($aws_mysqli->error);
 
-	while($row = $result->fetch_assoc()){
-		$topic_id = $row['max_topic_id'];
-		echo logEvent("Max topic_id from AWS: $topic_id");
-		newline();
+	$rowsReturned = $result->num_rows; 
+	echo nl2br ("Rows returned: $rowsReturned \n") ; 
+
+	if($rowsReturned == 0) {
+		echo logEvent("AWS has no topics, starting from 0");
+		newLine();
+		$topicId = 0;
+	}
+		else {
+		while($row = $result->fetch_assoc()){
+			$topicId = $row['max_topic_id'];
+			echo logEvent("Max topic_id from AWS: $topic_id");
+			newline();
+		}
 	}
 
-	return $topic_id;
+	return $topicId;
+
 }
 
-function getNextForum($max_topic)
+function getNextForum($maxTopic)
 {	
 	global $forum_id, $f_mysqli, $table_topics;
 
 	// from forum db, get the next higher # topic 
-	$query_get_next_topic = "SELECT min(topic_id) as min_topic_id, max(topic_id) as max_topic_id FROM $table_topics WHERE forum_id = $forum_id AND topic_id > $max_topic" ;
+	$query_get_next_topic = "SELECT min(topic_id) as min_topic_id, max(topic_id) as max_topic_id " .
+		" FROM $table_topics WHERE forum_id = $forum_id AND topic_id > $maxTopic" ;
 	echo nl2br("Forum query: $query_get_next_topic\n");
 
 	$result = $f_mysqli->query($query_get_next_topic) or die ($f_mysqli->error);
 
-	$rows_returned = $result->num_rows; 
-	echo nl2br ("Rows returned: $rows_returned \n") ; 
+	$rowsReturned = $result->num_rows; 
+	echo nl2br ("Rows returned: $rowsReturned \n") ; 
 
 	// exit if we dont get any new topics
-	//if($rows_returned < 1) {
+	//if($rowsReturned < 1) {
 	//	echo "Nothing to do! Stopping. ";
 	//	die;
 	//	}
 
 	while($row = $result->fetch_assoc()){
+		echo $row['min_topic_id'];
 		echo logEvent("Next topic_id in forum DB: " . $row['min_topic_id']);
 		$topic_id = $row['min_topic_id'];
 		newLine();
@@ -109,7 +124,7 @@ function getNextForum($max_topic)
 		newline();
 	}
 
-	// echo ($topic_id - $max_aws_topic_id);
+	// echo ($topic_id - $maxAWSTopicId);
 
 	return $topic_id;
 }
@@ -118,15 +133,23 @@ function getNextTopicDetails($topic_id)
 {	
 	global $forum_id, $f_mysqli, $table_topics;
 
+	$startTS = microtime(true);
+	echo "Start microtime: $startTS";
+	newline();
+
+	$rowsSuccessCounter = 0;
+
 	// from forum db, get the next higher # topic 
 	$query_fields = " topic_id, forum_id, topic_title, topic_first_poster_name, pnp_sendZip, pnp_recZip " ;
-	$query_get_next_topic = "SELECT $query_fields FROM $table_topics WHERE forum_id = $forum_id AND topic_id = $topic_id ORDER BY topic_id LIMIT 1" ;
+	$query_get_next_topic = "SELECT $query_fields FROM $table_topics " .
+		" WHERE forum_id = $forum_id AND topic_id >= $topic_id " .
+		" ORDER BY topic_id LIMIT 100" ;
 	echo nl2br("Forum details query: $query_get_next_topic\n");
 
 	$result = $f_mysqli->query($query_get_next_topic) or die ($f_mysqli->error);
 
-	$rows_returned = $result->num_rows; 
-	echo nl2br ("Rows returned: $rows_returned \n") ; 
+	$rowsReturned = $result->num_rows; 
+	echo nl2br ("Rows returned: $rowsReturned \n") ; 
 
 	while($row = $result->fetch_assoc()){
 		echo logEvent("Next topic_id in forum DB: " . $row['topic_id' ]);
@@ -137,29 +160,40 @@ function getNextTopicDetails($topic_id)
 		$topic_first_poster_name = $f_mysqli->real_escape_string($row['topic_first_poster_name']);
 		$pnp_sendZip = $row['pnp_sendZip'];
 		$pnp_recZip = $row['pnp_recZip'];
+
+		// insert into AWS
+		insertTopic($topic_id, $forum_id, $topic_title, $topic_first_poster_name, $pnp_sendZip, $pnp_recZip);
+		$rowsSuccessCounter = $rowsSuccessCounter + 1; 
+
 	}
 
-	// echo ($topic_id - $max_aws_topic_id);
+	$endTS = microtime(true);
+	echo "Ending microtime: $endTS";
+	newline();
+	$durationTime = $endTS - $startTS;
+	echo logEvent("Duration: $durationTime seconds for $rowsSuccessCounter rows");
+	newLine();
 
-	return array ($topic_id, $forum_id, $topic_title, $topic_first_poster_name, $pnp_sendZip, $pnp_recZip);
 }
 
 function insertTopic($topic_id, $forum_id, $topic_title, $topic_first_poster_name, $pnp_sendZip, $pnp_recZip)
 {
 	// insert this topic and details into AWS
-	global $forum_id, $aws_mysqli, $table_aws_topics, $f_server, $f_database;
+	global $forum_id, $aws_mysqli, $table_aws_topics, $f_server, $f_database, $rowsSuccessCounter;
 
-	$query_fields = " topic_id, forum_id, topic_title, topic_first_poster_name, pnp_sendZip, pnp_recZip, source_server, source_database " ;
-	$insert_query = "INSERT INTO $table_aws_topics ($query_fields) VALUES ( '$topic_id', '$forum_id', '$topic_title', '$topic_first_poster_name', '$pnp_sendZip', '$pnp_recZip', '$f_server', '$f_database')"; 
+	$insertFields = " topic_id, forum_id, topic_title, topic_first_poster_name, pnp_sendZip, pnp_recZip, source_server, source_database " ;
+	$insertQuery = "INSERT INTO $table_aws_topics ($insertFields) VALUES ( '$topic_id', '$forum_id', '$topic_title', '$topic_first_poster_name', '$pnp_sendZip', '$pnp_recZip', '$f_server', '$f_database')"; 
 
-	echo nl2br ("Insert to AWS: $insert_query \n\n ");
+	echo nl2br ("Insert to AWS: $insertQuery \n\n ");
 
-	$result = $aws_mysqli->query($insert_query) ;
+	$result = $aws_mysqli->query($insertQuery) ;
 	if(!$result) {
-			echo logEvent("Error: $aws_mysqli->error for insert: $insert_query");
+			echo logEvent("Error: $aws_mysqli->error for insert: $insertQuery");
 		} else
 		{
-			echo logEvent("Success: $insert_query");
+			echo logEvent("Success: $insertQuery");
+			$rowsSuccessCounter = $rowsSuccessCounter + 1; 
+		
 		}
 }
 
