@@ -1,6 +1,6 @@
 <?php
 
-//  this updates users from the forum into the AWS database so we can send distance notifications
+//  this copies users from the forum into the AWS database so we can send distance notifications
 
 // include forum config file for DB info
 include "settings.php";
@@ -92,17 +92,29 @@ function getMaxUserAWS()
 {
 	global $table_aws_users, $f_database, $aws_mysqli;
 	$queryMaxUserAWS = "SELECT max(user_id) AS max_user_id " .
-		" FROM $table_aws_users WHERE source_database = '$f_database'";
+		" FROM $table_aws_users WHERE source_database = '$f_database' " .
+		" HAVING max_user_id IS NOT NULL;" ;
 	echo $queryMaxUserAWS;
 	newLine();
 	$result = $aws_mysqli->query($queryMaxUserAWS) or die ($aws_mysqli->error);
 
-	while($row = $result->fetch_assoc()){ 
-		$user_id = $row['max_user_id'];
-		echo logEvent("Max user_id from AWS: $user_id");
+	$rowsReturned = $result->num_rows; 
+	echo nl2br ("Rows returned: $rowsReturned \n") ; 
+
+	if($rowsReturned == 0) {
+		echo logEvent("AWS has no users, starting from 0");
 		newLine();
+		$userId = 0;
 	}
-		return $user_id;
+		else {
+		while($row = $result->fetch_assoc()){
+			$userId = $row['max_user_id'];
+			echo logEvent("Max user_id from AWS: $userId");
+			newline();
+		}
+	}
+
+	return $userId;
 }
 
 // TODO: If forum has new user, extract and load that user forum->AWS
@@ -122,8 +134,8 @@ function getNextUserForum($maxUserAWS)
 		" city, state, CURRENT_TIMESTAMP " . 
  		" FROM $table_users_details " .
  		" WHERE user_id > $maxUserAWS " .
- 		" ORDER BY user_id LIMIT 1000 "; // increase once we know it won't blow up
-	echo $queryNextUserForum;
+ 		" ORDER BY user_id LIMIT 500 "; // increase once we know it won't blow up
+	echo "getNextUserForum: $queryNextUserForum" ;
 	newLine();
 	$result = $f_mysqli->query($queryNextUserForum) or die ($f_mysqli->error);
 
