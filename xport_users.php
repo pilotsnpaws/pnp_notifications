@@ -13,19 +13,11 @@ newline();
 // define the prefix of each log message
 $logType = '[user xport]'; 
 
-// get DB creds from forum config
+// get DB creds from forum config, AWS creds are in config as well but we don't rename them
 $f_username=$dbuser;
 $f_password=$dbpasswd;
 $f_database=$dbname;
 $f_server=$dbhost;
-
-// hardcode creds for AWS DB
-// TODO: move these to config file
-// $aws_username
-// $aws_password 
-// $aws_database
-// $aws_server
-
 
 // define tables, we could use phpbb's constants.php but unsure how that will work with upgrade
 $table_users = 'phpbb_users'; 

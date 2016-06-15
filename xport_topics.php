@@ -14,19 +14,11 @@ newline();
 // define the prefix of each log message
 $logType = '[topic xport]'; 
 
-// get DB creds from forum config
+// get DB creds from forum config, AWS creds are in config as well but we don't rename them
 $f_username=$dbuser;
 $f_password=$dbpasswd;
 $f_database=$dbname;
 $f_server=$dbhost;
-
-// hardcode creds for AWS DB
-// TODO: move these to config file
-// $aws_username
-// $aws_password 
-// $aws_database
-// $aws_server
-
 
 // define tables, we could use phpbb's constants.php but unsure how that will work with upgrade
 $tableTopics = 'phpbb_topics'; 
@@ -117,7 +109,7 @@ function getNextForum($maxTopic)
 	}
 		else {
 			while($row = $result->fetch_assoc()){
-				echo $row['min_topic_id'];
+				// echo $row['min_topic_id'];
 				echo logEvent("Next topic_id in forum DB: " . $row['min_topic_id']);
 				$topic_id = $row['min_topic_id'];
 				newLine();
@@ -182,13 +174,15 @@ function insertTopic($topic_id, $forum_id, $topic_title, $topic_first_poster_nam
 	global $forum_id, $aws_mysqli, $tableAWSTopics, $f_server, $f_database, $f_mysqli, $rowsSuccessCounter;
 
 // get sending zip coordinates, TODO this should be moved to its own function to just return lat/lon by any zip
-	$zipQuery = "SELECT lat, lon FROM zipcodes WHERE zip = $pnp_sendZip LIMIT 1" ; // we should only have one entry per zip, but just in case limit
+	$zipQuery = "SELECT lat, lon FROM zipcodes WHERE zip = '$pnp_sendZip' LIMIT 1" ; // we should only have one entry per zip, but just in case limit
 	$zipResult = $f_mysqli->query($zipQuery);
 	if(!zipResult) {
 			echo logEvent("Error: $aws_mysqli->error for zip query: $zipQuery");
+			newline();
 		} else
 		{
 			echo logEvent("Success: $zipQuery");
+			newLine();
 		}
 // TODO handle if we get no result/rows=0
 
@@ -200,13 +194,15 @@ function insertTopic($topic_id, $forum_id, $topic_title, $topic_first_poster_nam
 	}
 
 // repeat for receiving zip coords, again TODO - use function on cleanup
-	$zipQuery = "SELECT lat, lon FROM zipcodes WHERE zip = $pnp_recZip LIMIT 1" ; // we should only have one entry per zip, but just in case limit
+	$zipQuery = "SELECT lat, lon FROM zipcodes WHERE zip = '$pnp_recZip' LIMIT 1" ; // we should only have one entry per zip, but just in case limit
 	$zipResult = $f_mysqli->query($zipQuery);
 	if(!zipResult) {
 			echo logEvent("Error: $aws_mysqli->error for zip query: $zipQuery");
+			newLine();
 		} else
 		{
 			echo logEvent("Success: $zipQuery");
+			newLine();
 		}
 // TODO handle if we get no result/rows=0
 
@@ -219,19 +215,24 @@ function insertTopic($topic_id, $forum_id, $topic_title, $topic_first_poster_nam
 
 // now insert into the AWS topics table
 	$insertFields = " topic_id, forum_id, topic_title, topic_first_poster_name, pnp_sendZip, pnp_recZip, " .
-		" send_lat, send_lon, send_location_point, rec_lat, rec_lon, rec_location_point, source_server, source_database " ;
+		" send_lat, send_lon, send_location_point, rec_lat, rec_lon, rec_location_point, topic_linestring, source_server, source_database " ;
+	$lineStringColumnValue = "LINESTRING($sendLon $sendLat, $recLon $recLat)";
 	$insertQuery = "INSERT INTO $tableAWSTopics ($insertFields) VALUES ( '$topic_id', '$forum_id', '$topic_title', '$topic_first_poster_name', " .
 		" '$pnp_sendZip', '$pnp_recZip', '$sendLat', '$sendLon', ST_GeomFromText('POINT($sendLon $sendLat)') , " . 
-		" '$recLat', '$recLon', ST_GeomFromText('POINT($recLon $recLat)'), '$f_server', '$f_database')"; 
+		" '$recLat', '$recLon', ST_GeomFromText('POINT($recLon $recLat)'), " .
+		" ST_GeomFromText('$lineStringColumnValue'), '$f_server', '$f_database')"; 
 
-	echo nl2br ("Insert to AWS: $insertQuery \n\n ");
+	// echo nl2br ("Insert to AWS: $insertQuery");
+	// newLine();
 
 	$result = $aws_mysqli->query($insertQuery) ;
 	if(!$result) {
 			echo logEvent("Error: $aws_mysqli->error for insert: $insertQuery");
+			newline();
 		} else
 		{
 			echo logEvent("Success: $insertQuery");
+			newline();
 			$rowsSuccessCounter = $rowsSuccessCounter + 1; 
 		
 		}
