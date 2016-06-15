@@ -72,7 +72,7 @@ $queryRecentActiveUsersForum = "SELECT last_visit, user_id, user_email, user_reg
 	" pf_foster_yn, pf_pilot_yn, apt_id, apt_name, zip, COALESCE(lat,0) as lat , COALESCE(lon,0) as lon, " .
 	" city, state, CURRENT_TIMESTAMP " . 
 		" FROM $table_users_details " .
-		" WHERE last_visit > date_add(CURRENT_TIMESTAMP, INTERVAL -6 HOUR)" .
+		" WHERE last_visit > date_add(CURRENT_TIMESTAMP, INTERVAL -3 HOUR)" .
 		" ORDER BY user_id LIMIT 500 "; // increase once we know it won't blow up
 echo "queryRecentActiveUsersForum: $queryRecentActiveUsersForum" ;
 newLine();

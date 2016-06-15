@@ -29,9 +29,9 @@ $f_server=$dbhost;
 
 
 // define tables, we could use phpbb's constants.php but unsure how that will work with upgrade
-$table_topics = 'phpbb_topics'; 
-$table_aws_topics = 'pnp_topics' ; // table in AWS that holds replicated topic data, but only columns we need
-$table_notif = 'pnp_trip_notif_status' ; // table that knows if we sent a notif to a user for a topic yet
+$tableTopics = 'phpbb_topics'; 
+$tableAWSTopics = 'pnp_topics' ; // table in AWS that holds replicated topic data, but only columns we need
+$tableNotif = 'pnp_trip_notif_status' ; // table that knows if we sent a notif to a user for a topic yet
 $forum_id = '5' ; // we only care about the trip request forum
 
 // define forum mysqli connection
@@ -66,10 +66,10 @@ if($nextForumTopicId > $maxAWSTopicId) {
 
 function getMaxAWS()
 {
-	global $forum_id, $aws_mysqli, $table_aws_topics, $f_database;
+	global $forum_id, $aws_mysqli, $tableAWSTopics, $f_database;
 	// get max topic_id from AWS topics - make sure its the same DB (xpilotspaws-forum, for ex)
 	$query_get_max_aws_topic = "SELECT max(topic_id) as max_topic_id " .
-		" FROM $table_aws_topics " . 
+		" FROM $tableAWSTopics " . 
 		" WHERE forum_id = $forum_id and source_database = '$f_database'" .
 		" HAVING max_topic_id IS NOT NULL" ; 
 	echo nl2br ("AWS max topic query: $query_get_max_aws_topic \n" ) ;
@@ -97,11 +97,11 @@ function getMaxAWS()
 
 function getNextForum($maxTopic)
 {	
-	global $forum_id, $f_mysqli, $table_topics;
+	global $forum_id, $f_mysqli, $tableTopics;
 
 	// from forum db, get the next higher # topic 
 	$query_get_next_topic = "SELECT min(topic_id) as min_topic_id, max(topic_id) as max_topic_id " .
-		" FROM $table_topics " .
+		" FROM $tableTopics " .
 		" WHERE forum_id = $forum_id AND topic_id > $maxTopic" . 
 		" HAVING max_topic_id IS NOT NULL " ;
 	echo nl2br("Forum query: $query_get_next_topic\n");
@@ -131,7 +131,7 @@ function getNextForum($maxTopic)
 
 function getNextTopicDetails($topic_id)
 {	
-	global $forum_id, $f_mysqli, $table_topics;
+	global $forum_id, $f_mysqli, $tableTopics;
 
 	$startTS = microtime(true);
 	echo "Start microtime: $startTS";
@@ -140,8 +140,8 @@ function getNextTopicDetails($topic_id)
 	$rowsSuccessCounter = 0;
 
 	// from forum db, get the next higher # topic 
-	$query_fields = " topic_id, forum_id, topic_title, topic_first_poster_name, pnp_sendZip, pnp_recZip " ;
-	$query_get_next_topic = "SELECT $query_fields FROM $table_topics " .
+	$queryFields = " topic_id, forum_id, topic_title, topic_first_poster_name, pnp_sendZip, pnp_recZip " ;
+	$query_get_next_topic = "SELECT $queryFields FROM $tableTopics " .
 		" WHERE forum_id = $forum_id AND topic_id >= $topic_id " .
 		" ORDER BY topic_id LIMIT 100" ;
 	echo nl2br("Forum details query: $query_get_next_topic\n");
@@ -179,10 +179,50 @@ function getNextTopicDetails($topic_id)
 function insertTopic($topic_id, $forum_id, $topic_title, $topic_first_poster_name, $pnp_sendZip, $pnp_recZip)
 {
 	// insert this topic and details into AWS
-	global $forum_id, $aws_mysqli, $table_aws_topics, $f_server, $f_database, $rowsSuccessCounter;
+	global $forum_id, $aws_mysqli, $tableAWSTopics, $f_server, $f_database, $f_mysqli, $rowsSuccessCounter;
 
-	$insertFields = " topic_id, forum_id, topic_title, topic_first_poster_name, pnp_sendZip, pnp_recZip, source_server, source_database " ;
-	$insertQuery = "INSERT INTO $table_aws_topics ($insertFields) VALUES ( '$topic_id', '$forum_id', '$topic_title', '$topic_first_poster_name', '$pnp_sendZip', '$pnp_recZip', '$f_server', '$f_database')"; 
+// get sending zip coordinates, TODO this should be moved to its own function to just return lat/lon by any zip
+	$zipQuery = "SELECT lat, lon FROM zipcodes WHERE zip = $pnp_sendZip LIMIT 1" ; // we should only have one entry per zip, but just in case limit
+	$zipResult = $f_mysqli->query($zipQuery);
+	if(!zipResult) {
+			echo logEvent("Error: $aws_mysqli->error for zip query: $zipQuery");
+		} else
+		{
+			echo logEvent("Success: $zipQuery");
+		}
+// TODO handle if we get no result/rows=0
+
+	while($row = $zipResult->fetch_assoc()){
+			$sendLat = $row['lat'];
+			$sendLon = $row['lon'];
+			// echo $sendLat;
+			// echo $sendLon;
+	}
+
+// repeat for receiving zip coords, again TODO - use function on cleanup
+	$zipQuery = "SELECT lat, lon FROM zipcodes WHERE zip = $pnp_recZip LIMIT 1" ; // we should only have one entry per zip, but just in case limit
+	$zipResult = $f_mysqli->query($zipQuery);
+	if(!zipResult) {
+			echo logEvent("Error: $aws_mysqli->error for zip query: $zipQuery");
+		} else
+		{
+			echo logEvent("Success: $zipQuery");
+		}
+// TODO handle if we get no result/rows=0
+
+	while($row = $zipResult->fetch_assoc()){
+			$recLat = $row['lat'];
+			$recLon = $row['lon'];
+			// echo $sendLat;
+			// echo $sendLon;
+	}
+
+// now insert into the AWS topics table
+	$insertFields = " topic_id, forum_id, topic_title, topic_first_poster_name, pnp_sendZip, pnp_recZip, " .
+		" send_lat, send_lon, send_location_point, rec_lat, rec_lon, rec_location_point, source_server, source_database " ;
+	$insertQuery = "INSERT INTO $tableAWSTopics ($insertFields) VALUES ( '$topic_id', '$forum_id', '$topic_title', '$topic_first_poster_name', " .
+		" '$pnp_sendZip', '$pnp_recZip', '$sendLat', '$sendLon', ST_GeomFromText('POINT($sendLon $sendLat)') , " . 
+		" '$recLat', '$recLon', ST_GeomFromText('POINT($recLon $recLat)'), '$f_server', '$f_database')"; 
 
 	echo nl2br ("Insert to AWS: $insertQuery \n\n ");
 
