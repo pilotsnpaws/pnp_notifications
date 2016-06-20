@@ -9,9 +9,21 @@ include "settings.php";
 include ($configPath);
 include "xport_functions.php";
 require 'vendor/autoload.php';
+include "email_trip_notif_template.php";
 
 echo "Environment: $environment"; 
 newline();
+
+// show IP for now in dev, just so we know when it changes to manage teh AWS firewall
+// showIP();
+
+function showIP() {
+  $ch = curl_init('http://ifconfig.me/ip');
+  curl_setopt($ch,CURLOPT_RETURNTRANSFER,TRUE);
+  $myIp = curl_exec($ch);
+  echo "Server IP: $myIp";
+  newLine(); 
+}
 
 // define the prefix of each log message
 $logType = '[send notif]'; 
@@ -61,7 +73,47 @@ $mail = new SendGrid\Mail();
 
 $content = new SendGrid\Content("text/plain", "some text here");
 $mail->addContent($content);
-$content = new SendGrid\Content("text/html", "<html><body>some HTML text here</body></html>");
+
+// build HTML content from template email_trip_notif_template.php
+
+$emailHTMLContent = "$emailHead $emailBody </html>" ;
+// echo $emailHTMLContent;
+
+// TODO figure out what data we need in email and have in DB
+
+$userEmail        = 'test@test.com';
+$userName         = 'userName';
+$userFlyingDistance = '333';
+$userHomeAirport  = 'KDEN';
+$userDistSend     = '123';
+$userDistRec      = '234';
+$topicId          = '40123';
+$topicTitle       = 'Test topic title!';
+$topicFromToText  = 'From Here 12345 to There 98282';
+$topicDistance    = '543';
+$topicUrlPrefix   = 'http://pilotsnpaws.org/forum/viewtopic.php?t=' ;
+$mapUrlPrefix     = 'http://www.pilotsnpaws.org/maps/maps_single_trip.php?topic='; //add topicId to end of this to show map
+$forumUcpUrl      = 'http://www.pilotsnpaws.org/forum/ucp.php?i=164' ;
+$forumTechUrl     = 'http://www.pilotsnpaws.org/forum/viewforum.php?f=17' ;
+
+$emailHTMLContent = str_replace("{notif_userEmail}", $userEmail, $emailHTMLContent) ;
+$emailHTMLContent = str_replace("{notif_userName}", $userName, $emailHTMLContent) ;
+$emailHTMLContent = str_replace("{notif_userFlyingDistance}", $userFlyingDistance, $emailHTMLContent) ;
+$emailHTMLContent = str_replace("{notif_userHomeAirport}", $userHomeAirport, $emailHTMLContent) ;
+$emailHTMLContent = str_replace("{notif_userDistSend}", $userDistSend, $emailHTMLContent) ;
+$emailHTMLContent = str_replace("{notif_userDistRec}", $userDistRec, $emailHTMLContent) ;
+$emailHTMLContent = str_replace("{notif_topicId}", $topicId, $emailHTMLContent) ;
+$emailHTMLContent = str_replace("{notif_topicTitle}", $topicTitle, $emailHTMLContent) ;
+$emailHTMLContent = str_replace("{notif_topicFromToText}", $topicFromToText, $emailHTMLContent) ;
+$emailHTMLContent = str_replace("{notif_topicDistance}", $topicDistance, $emailHTMLContent) ;
+$emailHTMLContent = str_replace("{notif_topicUrlPrefix}", $topicUrlPrefix, $emailHTMLContent) ;
+$emailHTMLContent = str_replace("{notif_mapUrlPrefix}", $mapUrlPrefix, $emailHTMLContent) ;
+$emailHTMLContent = str_replace("{notif_forumUcpUrl}", $forumUcpUrl, $emailHTMLContent) ;
+$emailHTMLContent = str_replace("{notif_forumTechUrl}", $forumTechUrl, $emailHTMLContent) ;
+
+echo $emailHTMLContent;
+
+$content = new SendGrid\Content("text/html", $emailHTMLContent);
 $mail->addContent($content);
 
 
@@ -89,21 +141,25 @@ $mail->addCategory("Local test");
 
 $sg = new \SendGrid($sgApiKey);
 
-// send the email
-$response = $sg->client->mail()->send()->post($mail);
-echo $response->statusCode();
-newline();
-echo $response->headers();
-newline();
-echo $response->body();
-newline();
 
+// flag for dev - false = no email sent
+$sendMail = false; 
+
+// send the email
+if($sendMail) {
+    $response = $sg->client->mail()->send()->post($mail);
+    echo $response->statusCode();
+    newline();
+    echo $response->headers();
+    newline();
+    echo $response->body();
+    newline();
+    }
+  
 
 // TODO figure out what topics haven't been sent
 
 // TODO figure out what users get that topic's notif based on their settings
-// TODO figure out what data we need in email and have in DB
-
 
 
 // TODO send notifications

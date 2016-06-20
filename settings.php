@@ -1,9 +1,9 @@
 <?php
 
 $environment = 'dev' ;
-$configPath  = '/users/michaelgreen/projects/pnp_forum/config.php' ;
+$configPath  = 'ca_dev/local_config.php' ;
 $logPath	= '/var/log/apache2/events.log' ; 
-$sgApiKey = 'sendgrid-api-key-here';
+$sgApiKey = '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';
 
 
 ?>
