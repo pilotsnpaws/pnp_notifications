@@ -6,6 +6,8 @@ create table pnp_trip_notif_status
     notify_status TINYINT(1),
 	  status_code VARCHAR(10),
     created_ts				TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	  source_server			VARCHAR(100),
+    source_database			VARCHAR(64),
     PRIMARY KEY (id)
     ) ENGINE=InnoDB ;
 
