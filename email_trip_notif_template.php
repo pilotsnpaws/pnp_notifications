@@ -2,7 +2,8 @@
 
 // this file holds the templated content for the trip notification email 
 
-$emailHead = '<!DOCTYPE html "-//w3c//dtd xhtml 1.0 transitional //en" "http://www.w3.org/tr/xhtml1/dtd/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+$emailHead = '<!DOCTYPE html "-//w3c//dtd xhtml 1.0 transitional //en" "http://www.w3.org/tr/xhtml1/dtd/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <!--[if gte mso 9]><xml>
      <o:OfficeDocumentSettings>
@@ -180,26 +181,45 @@ $emailBody = '<body style="width: 100% !important;min-width: 100%;-webkit-text-s
         </td>
     </tr>
 </tbody></table>
-</td></tr></tbody></table></div><!--[if (gte mso 9)|(IE)]></td><![endif]--><!--[if (gte mso 9)|(IE)]><td valign="top" width="333"><![endif]--><div class="col num8" style="display: inline-block;vertical-align: top;text-align: center;width: 333px"><table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" align="center" width="100%" border="0"><tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;background-color: transparent;padding-top: 15px;padding-right: 0px;padding-bottom: 15px;padding-left: 0px;border-top: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-left: 0px solid transparent"><table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" width="100%">
+</td></tr></tbody></table></div><!--[if (gte mso 9)|(IE)]></td><![endif]-->
+<!--[if (gte mso 9)|(IE)]><td valign="top" width="333"><![endif]-->
+<div class="col num8" style="display: inline-block;vertical-align: top;text-align: center;width: 333px"><table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" align="center" width="100%" border="0"><tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;background-color: transparent;padding-top: 15px;padding-right: 0px;padding-bottom: 15px;padding-left: 0px;border-top: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-left: 0px solid transparent"><table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" width="100%">
   <tbody><tr style="vertical-align: top">
     <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 5px;padding-right: 10px;padding-bottom: 5px;padding-left: 10px">
         <div style="color:#555555;line-height:120%;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;">            
-        	<div style="font-size:14px;line-height:14px;font-family:inherit;color:#555555;text-align:left;"><p style="margin: 0;font-size: 14px;line-height: 17px">
-          <span style="font-size: 24px; line-height: 28px;">Pilots N Paws</span><br></p></div>
+        	<div style="font-size:14px;line-height:14px;font-family:inherit;color:#555555;text-align:left;">
+            <p style="margin: 0;font-size: 14px;line-height: 17px">
+              <span style="font-size: 24px; line-height: 28px;">
+                Pilots N Paws
+              </span>
+              <br>
+            </p>
+          </div>
         </div>
     </td>
   </tr>
 </tbody></table>
 <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" width="100%">
   <tbody><tr style="vertical-align: top">
-    <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 5px;padding-right: 10px;padding-bottom: 0px;padding-left: 10px">
+    <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 0px;padding-right: 10px;padding-bottom: 0px;padding-left: 10px">
         <div style="color:#555555;line-height:120%;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;">            
-        	<div style="font-size:14px;line-height:14px;color:#555555;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;text-align:left;"><p style="margin: 0;font-size: 14px;line-height: 17px"><span style="font-size: 20px; line-height: 24px;"><strong><span style="line-height: 24px; font-size: 20px;">New transport notification</span></strong></span></p></div>
+        	<div style="font-size:14px;line-height:14px;color:#555555;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;text-align:left;">
+            <p style="margin: 0;font-size: 14px;line-height: 17px">
+              <span style="font-size: 20px; line-height: 24px;">
+                <strong>
+                  <span style="line-height: 24px; font-size: 20px;">
+                    New transport notification
+                  </span>
+                </strong>
+              </span>
+            </p>
+          </div>
         </div>
     </td>
   </tr>
 </tbody></table>
-</td></tr></tbody></table></div><!--[if (gte mso 9)|(IE)]></td><![endif]--><!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]--></td></tr></tbody></table></td></tr></tbody></table>
+</td></tr></tbody></table></div><!--[if (gte mso 9)|(IE)]></td><![endif]-->
+<!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]--></td></tr></tbody></table></td></tr></tbody></table>
                     <!--[if mso]>
                     </td></tr></table>
                     <![endif]-->
@@ -224,38 +244,54 @@ $emailBody = '<body style="width: 100% !important;min-width: 100%;-webkit-text-s
   <tbody><tr style="vertical-align: top">
     <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 5px;padding-right: 10px;padding-bottom: 5px;padding-left: 10px">
         <div style="color:#777777;line-height:120%;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;">            
-        	<div style="font-size:14px;line-height:14px;color:#777777;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;text-align:left;">
-          <p style="margin: 0;font-size:16px;line-height: 17px">
-          <span style="font-size:18px; line-height: 19px;">
-            
-            <a href="{notif_mapUrlPrefix}{notif_topicId}" 
-            target="_blank">{notif_topicTitle}</a>
-          </span></p></div>
+            <div style="font-size:14px;line-height:14px;color:#777777;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;text-align:left;">
+              <p style="margin: 0;font-size:16px;line-height: 17px">
+                <span style="font-size:18px; line-height: 19px;">
+                  <a href="{notif_topicUrlPrefix}{notif_topicId}" 
+                  target="_blank">{notif_topicTitle}</a>
+                </span>
+              </p>
+              <p style="margin: 0;font-size: 16px;line-height: 17px">
+                <span style="font-size:14px; line-height: 14px;">
+                  {notif_topicFromToText}
+                </span>
+              </p>
+            </div>
         </div>
     </td>
   </tr>
 </tbody></table>
 <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" width="100%">
   <tbody><tr style="vertical-align: top">
-    <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 10px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px">
+    <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 5px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px">
         <div style="color:#555555;line-height:120%;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;">            
         	<div style="font-size:14px;line-height:14px;color:#555555;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;text-align:left;">
-            <p style="margin: 0;font-size: 14px;line-height: 17px"><span style="font-size:14px; line-height: 14px;">
-              {notif_topicFromToText}
-            </span><br>
             <span style="font-size:14px; line-height: 14px;">
               Trip distance: {notif_topicDistance} miles
-            </span><br><span style="font-size:14px; line-height: 14px;">
-              You are based {notif_userDistSend} miles from the sender and {notif_userDistRec} miles from the destination.&nbsp;
-          </span><br></p><p style="margin: 0;font-size: 14px;line-height: 16px"><span style="font-size:14px; line-height: 14px;">&nbsp;</span>
-          <br></p><p style="margin: 0;font-size:14px;line-height: 14px"><span style="font-size:14px; line-height: 14px;">
+            </span>
+            <br>
+            <span style="font-size:14px; line-height: 14px;">
+              You are based {notif_userDistSend} miles from the sender and {notif_userDistRec} miles from the destination.
+              <br>
+              To fly this entire trip solo would take {notif_UserTotalDist} miles. 
+            </span>
+          <br>
+          <p style="margin: 0;font-size: 14px;line-height: 16px"><span style="font-size:14px; line-height: 14px;">&nbsp;</span>
+          <br>
+          </p>
+          <p style="margin: 0;font-size:14px;line-height: 14px"><span style="font-size:14px; line-height: 14px;">
             To view the request on the forum: 
             <a style="color:#0000FF;text-decoration: underline; font-size:14px; line-height: 14px;" href="{notif_topicUrlPrefix}{notif_topicId}" target="_blank">{notif_topicUrlPrefix}{notif_topicId}</a>
           </span></p>
           <p style="margin: 0;font-size:14px;line-height: 14px">&nbsp;<br></p><p style="margin: 0;font-size:14px;line-height: 14px">
           Click <a style="color:#0000FF;text-decoration: underline; font-size:14px; line-height: 14px;" href="{notif_mapUrlPrefix}{notif_topicId}" 
             target="_blank">here to view this request on a&nbsp;map.</a>&nbsp;
-          </p><p style="margin: 0;font-size:14px;line-height: 14px"><br data-mce-bogus="1"></p><p style="margin: 0;font-size:14px;line-height: 14px">To reply to this trip request, please use the links above and do&nbsp;not reply to this email. &nbsp;Replies to this email are not sent back to the trip requestor.&nbsp;</p></div>
+          </p>
+            <p style="margin: 0;font-size:14px;line-height: 14px"><br data-mce-bogus="1"></p><p style="margin: 0;font-size:14px;line-height: 14px">
+            To reply to this trip request, please use the links above and do&nbsp;not reply to this email.
+            Replies to this email are not sent back to the trip requestor.&nbsp;
+            </p>
+          </div>
         </div>
     </td>
   </tr>
@@ -265,20 +301,26 @@ $emailBody = '<body style="width: 100% !important;min-width: 100%;-webkit-text-s
     <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 15px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px">
         <div style="color:#808080;line-height:120%;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;">            
         	<div style="font-size:14px;line-height:14px;color:#808080;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;text-align:left;">
-          <p style="margin: 0;font-size: 14px;line-height: 17px">
-          <span style="font-size: 14px; line-height: 16px;">
-            You are receiving this email because you are registered as a volunteer pilot on the pilotsnpaws.org forum.
-            &nbsp;Your user profile settings have matched this new transport request.&nbsp;
-          </span><br><span style="font-size: 14px; line-height: 16px;">
-            Your settings currently will notify you of trips coming within {notif_userFlyingDistance} miles of {notif_userHomeAirport} airport. 
-            &nbsp;To change these settings, please click <a style="color:#0000FF;text-decoration: underline; font-size: 14px; line-height: 16px;" href="{notif_forumUcpUrl}" target="_blank">here</a>.&nbsp;</span><br><br><span style="font-size: 14px; line-height: 16px;">If you believe you received this message in error, please let us know by replying to this email, or posting on the <a style="color:#0000FF;text-decoration: underline; font-size: 14px; line-height: 16px;" href="{notif_forumTechUrl}" target="_blank">Technical Support forum</a>.&nbsp;</span></p><p style="margin: 0;font-size: 14px;line-height: 16px"><span style="font-size: 14px; line-height: 16px;">&nbsp;</span><br></p><p style="margin: 0;font-size: 14px;line-height: 16px"><span style="font-size: 14px; line-height: 16px;">
-            To unsubscribe from these notifications, reply to this email with the word UNSUBSCRIBE at the top, or set your <i>Distance willing to fly one way</i> to 0
-          <a style="color:#0000FF;text-decoration: underline; font-size: 14px; line-height: 16px;" href="{notif_forumUcpUrl}" target="_blank">here</a>.&nbsp;</span></p></div>
+            <p style="margin: 0;font-size: 14px;line-height: 17px">
+            <span style="font-size: 14px; line-height: 16px;">
+              You are receiving this email because you are registered as a volunteer pilot on the pilotsnpaws.org forum.
+              &nbsp;Your user profile settings have matched this new transport request.&nbsp;
+            </span>
+            <br>
+              <span style="font-size: 14px; line-height: 16px;">
+                Your settings currently will notify you of trips coming within {notif_userFlyingDistance} miles of {notif_userHomeAirport} airport. 
+                To change these settings, please click <a style="color:#0000FF;text-decoration: underline; font-size: 14px; line-height: 16px;" href="{notif_forumUcpUrl}" target="_blank">here</a>.&nbsp;</span><br><br><span style="font-size: 14px; line-height: 16px;">If you believe you received this message in error, please let us know by replying to this email, or posting on the <a style="color:#0000FF;text-decoration: underline; font-size: 14px; line-height: 16px;" href="{notif_forumTechUrl}" target="_blank">Technical Support forum</a>.&nbsp;</span></p><p style="margin: 0;font-size: 14px;line-height: 16px"><span style="font-size: 14px; line-height: 16px;">&nbsp;</span><br></p><p style="margin: 0;font-size: 14px;line-height: 16px"><span style="font-size: 14px; line-height: 16px;">
+                To unsubscribe from these notifications, reply to this email with the word UNSUBSCRIBE at the top, or set your <i>Distance willing to fly one way</i> to 0
+              <a style="color:#0000FF;text-decoration: underline; font-size: 14px; line-height: 16px;" href="{notif_forumUcpUrl}" target="_blank">here</a>
+              </span>
+            </p>
+          </div>
         </div>
     </td>
   </tr>
 </tbody></table>
-</td></tr></tbody></table></div><!--[if (gte mso 9)|(IE)]></td><![endif]--><!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]--></td></tr></tbody></table></td></tr></tbody></table>
+</td></tr></tbody></table></div><!--[if (gte mso 9)|(IE)]></td><![endif]-->
+<!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]--></td></tr></tbody></table></td></tr></tbody></table>
                     <!--[if mso]>
                     </td></tr></table>
                     <![endif]-->

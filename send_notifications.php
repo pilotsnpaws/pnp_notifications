@@ -51,9 +51,7 @@ define("forumTechUrl","http://www.pilotsnpaws.org/forum/viewforum.php?f=17");
 
 // define forum mysqli connection
 $f_mysqli = new mysqli($f_server, $f_username, $f_password, $f_database);
-
 echo nl2br ("Forum database: $f_server/$f_database \n" ) ; 
-
  // Check forum connection
 if (mysqli_connect_errno($f_mysqli))
   {
@@ -62,14 +60,13 @@ if (mysqli_connect_errno($f_mysqli))
 
 // define AWS mysqli connection
 $aws_mysqli = new mysqli($aws_server, $aws_username, $aws_password, $aws_database);
-
 echo nl2br ("AWS database: $aws_server/$aws_database \n\n" ) ; 
-
- // Check AWS connection
+// Check AWS connection
 if (mysqli_connect_errno($aws_mysqli))
-  {
-  echo "Failed to connect to AWS MySQL: " . mysqli_connect_error();
-  } else { } ;
+	{
+	echo "Failed to connect to AWS MySQL: " . mysqli_connect_error();
+	} else { } ;
+
 
 $topicId = getNextTopic();
 
@@ -78,7 +75,7 @@ $queryGetTopicDetails = "select t.topic_id, t.topic_title, t.pnp_sendZip, t.pnp_
 from pnp_topics t
 where t.topic_id = $topicId";
 
-$result = $aws_mysqli->query($queryGetTopicDetails) or die ($aws_mysqli->error);
+$result = $aws_mysqli->query($queryGetTopicDetails);
 $rowsReturned = $result->num_rows; 
 if($rowsReturned == 0) {
   echo logEvent("Topic details query returned no rows.");
@@ -97,8 +94,13 @@ if($rowsReturned == 0) {
      echo logEvent("Topic details query returned > 1 row. Something is wrong. ");
 
 }
-  
+ 
+
+// magic is called from here
 $topicFromToText = getFromToText($sendZip, $recZip);
+$mail = buildEmails($topicId, $topicFromToText);
+// end magic
+
 
 // TODO figure out what topics haven't been sent
 function getNextTopic() {
@@ -111,7 +113,7 @@ function getFromToText($sendZip, $recZip) {
   $sendText = cityStateByZip($sendZip);
   $recText = cityStateByZip($recZip);
   
-  $fromToText = "From $sendText to $recText";
+  $fromToText = "$sendText to $recText";
   return $fromToText;
 }
 
@@ -124,154 +126,182 @@ function cityStateByZip($zipCode) {
 	return "$city, $state";
 }
 
-// TODO figure out what users get that topic's notif based on their settings
-$queryUsersToNotify = "select DISTINCT t.topic_id, 
-    u.user_id, u.user_email, u.username, u.pf_flying_radius, u.apt_id, 
-    ROUND((ST_distance_sphere(u.location_point, t.send_location_point) / 1609),0) as send_dist,
-    ROUND((ST_distance_sphere(u.location_point, t.rec_location_point) / 1609),0) as rec_dist,
-	t.topic_title, 
-    ROUND((ST_distance_sphere(t.send_location_point, t.rec_location_point) / 1609),0) as trip_dist,
-    u.location_point, t.send_location_point, t.rec_location_point,
-    ST_buffer(u.location_point, pf_flying_radius * 0.01455581689886) as flying_circle,
-    topic_linestring,
-    ST_Intersects(ST_buffer(u.location_point, pf_flying_radius * 0.01455581689886), topic_linestring) as intersects
-from pnp_topics t JOIN 
-	pnp_users u on t.source_server = u.source_server and t.source_database = u.source_database
-where 1=1
-	and t.topic_id = $topicId
-	and pf_flying_radius > 0 
-    and pf_pilot_yn = 1
-    and ST_Intersects(ST_buffer(u.location_point, pf_flying_radius * 0.01455581689886), topic_linestring) = 1
-    and t.source_server = 'mysql.pilotsnpaws.org' -- '$f_server' 
-		and t.source_database = 'xpilotsnpaws-forum' -- '$f_database'
-order by t.topic_id, u.user_id;" ;
+function buildEmails($topicId, $topicFromToText) {
+	global $aws_server, $aws_database, $aws_mysqli, $emailHead, $emailBody;
+		// TODO figure out what users get that topic's notif based on their settings
+		$queryUsersToNotify = "select DISTINCT t.topic_id, 
+				u.user_id, u.user_email, u.username, u.pf_flying_radius, u.apt_id, 
+				ROUND((ST_distance_sphere(u.location_point, t.send_location_point) / 1609),0) as send_dist,
+				ROUND((ST_distance_sphere(u.location_point, t.rec_location_point) / 1609),0) as rec_dist, t.topic_title, 
+				ROUND((ST_distance_sphere(t.send_location_point, t.rec_location_point) / 1609),0) as trip_dist,
+				u.location_point, t.send_location_point, t.rec_location_point,
+				ST_buffer(u.location_point, pf_flying_radius * 0.01455581689886) as flying_circle,
+				topic_linestring,
+				ST_Intersects(ST_buffer(u.location_point, pf_flying_radius * 0.01455581689886), topic_linestring) as intersects
+		from pnp_topics t JOIN 
+			pnp_users u on t.source_server = u.source_server and t.source_database = u.source_database
+		where 1=1
+			and t.topic_id = $topicId
+			and pf_flying_radius > 0 
+				and pf_pilot_yn = 1
+				and ST_Intersects(ST_buffer(u.location_point, pf_flying_radius * 0.01455581689886), topic_linestring) = 1
+				and t.source_server = 'mysql.pilotsnpaws.org' -- '$aws_server' 
+				and t.source_database = 'xpilotsnpaws-forum' -- '$aws_database'
+		order by t.topic_id, u.user_id limit 2;" ;
 
-echo $queryUsersToNotify;
-newLine();
-
-$result = $aws_mysqli->query($queryUsersToNotify) or die ($aws_mysqli->error);
-
-	$rowsReturned = $result->num_rows; 
-	echo nl2br ("Rows returned: $rowsReturned \n");
-
-	if($rowsReturned == 0) {
-		echo logEvent("No results");
+		echo $queryUsersToNotify;
 		newLine();
-	}
-		else {
-		while($row = $result->fetch_assoc()){
-      $userEmail        = $row['user_email'];
-      $userName         = $row['username'];
-      $userFlyingDistance = $row['pf_flying_radius'];
-      $userHomeAirport  = strToUpper($row['apt_id']);
-      $userDistSend     = $row['send_dist'];
-      $userDistRec      = $row['rec_dist'];
-      $topicId          = $row['topic_id'];
-      $topicTitle       = $row['topic_title'];
-      $topicDistance    = $row['trip_dist'];
-    }
-	}
 
-// TODO define sendgrid API
-$from = new SendGrid\Email(null, "forum@pilotsnpaws.org");
-$to = new SendGrid\Email(null, "nekbet@gmail.com");
-// content
+		$result = $aws_mysqli->query($queryUsersToNotify);
 
-$mail = new SendGrid\Mail();
+			$rowsReturned = $result->num_rows; 
+			echo nl2br ("Rows returned: $rowsReturned \n");
 
-$content = new SendGrid\Content("text/plain", "some text here");
-$mail->addContent($content);
+			if($rowsReturned == 0) {
+				echo logEvent("No results");
+				newLine();
+			}
+				else {  // start iterating thru users, one per row
+				while($row = $result->fetch_assoc()){
+					$userId						= $row['user_id'];
+					$userEmail        = $row['user_email'];
+					$userName         = $row['username'];
+					$userFlyingDistance = $row['pf_flying_radius'];
+					$userHomeAirport  = strToUpper($row['apt_id']);
+					$userDistSend     = $row['send_dist'];
+					$userDistRec      = $row['rec_dist'];
+					$topicId          = $row['topic_id'];
+					$topicTitle       = $row['topic_title'];
+					$topicDistance    = $row['trip_dist'];
 
-// build HTML content from template email_trip_notif_template.php
+					// build HTML content from template email_trip_notif_template.php
+					$emailHTMLContent = "$emailHead $emailBody </html>" ;
 
-$emailHTMLContent = "$emailHead $emailBody </html>" ;
-// echo $emailHTMLContent;
+					// replace the placeholders with real data
+					$emailHTMLContent = str_replace("{notif_userEmail}", $userEmail, $emailHTMLContent) ;
+					$emailHTMLContent = str_replace("{notif_userName}", $userName, $emailHTMLContent) ;
+					$emailHTMLContent = str_replace("{notif_userFlyingDistance}", $userFlyingDistance, $emailHTMLContent) ;
+					$emailHTMLContent = str_replace("{notif_userHomeAirport}", $userHomeAirport, $emailHTMLContent) ;
+					$emailHTMLContent = str_replace("{notif_userDistSend}", $userDistSend, $emailHTMLContent) ;
+					$emailHTMLContent = str_replace("{notif_userDistRec}", $userDistRec, $emailHTMLContent) ;
+					$emailHTMLContent = str_replace("{notif_topicId}", $topicId, $emailHTMLContent) ;
+					$emailHTMLContent = str_replace("{notif_topicTitle}", $topicTitle, $emailHTMLContent) ;
+					$emailHTMLContent = str_replace("{notif_topicFromToText}", $topicFromToText, $emailHTMLContent) ;
+					$emailHTMLContent = str_replace("{notif_topicDistance}", $topicDistance, $emailHTMLContent) ;
+					$emailHTMLContent = str_replace("{notif_topicUrlPrefix}", topicUrlPrefix, $emailHTMLContent) ;
+					$emailHTMLContent = str_replace("{notif_mapUrlPrefix}", mapUrlPrefix, $emailHTMLContent) ;
+					$emailHTMLContent = str_replace("{notif_forumUcpUrl}", forumUcpUrl, $emailHTMLContent) ;
+					$emailHTMLContent = str_replace("{notif_forumTechUrl}", forumTechUrl, $emailHTMLContent) ;
+					$emailHTMLContent = str_replace("{notif_UserTotalDist}", $userDistSend + $userDistRec + $topicDistance , $emailHTMLContent) ;
 
-// TODO figure out what data we need in email and have in DB
-// $userEmail        = 'test@test.com';
-// $userName         = 'userName';
-// $userFlyingDistance = '333';
-// $userHomeAirport  = 'KDEN';
-// $userDistSend     = '123';
-// $userDistRec      = '234';
-// $topicId          = '40123';
-// $topicTitle       = 'Test topic title!';
-// $topicFromToText  = 'From Here 12345 to There 98282';
-// $topicDistance    = '543';
-// $topicUrlPrefix   = 'http://pilotsnpaws.org/forum/viewtopic.php?t=' ;
-// $mapUrlPrefix     = 'http://www.pilotsnpaws.org/maps/maps_single_trip.php?topic='; //add topicId to end of this to show map
-// $forumUcpUrl      = 'http://www.pilotsnpaws.org/forum/ucp.php?i=164' ;
-// $forumTechUrl     = 'http://www.pilotsnpaws.org/forum/viewforum.php?f=17' ;
+					// show email 
+					echo $emailHTMLContent;
 
-$emailHTMLContent = str_replace("{notif_userEmail}", $userEmail, $emailHTMLContent) ;
-$emailHTMLContent = str_replace("{notif_userName}", $userName, $emailHTMLContent) ;
-$emailHTMLContent = str_replace("{notif_userFlyingDistance}", $userFlyingDistance, $emailHTMLContent) ;
-$emailHTMLContent = str_replace("{notif_userHomeAirport}", $userHomeAirport, $emailHTMLContent) ;
-$emailHTMLContent = str_replace("{notif_userDistSend}", $userDistSend, $emailHTMLContent) ;
-$emailHTMLContent = str_replace("{notif_userDistRec}", $userDistRec, $emailHTMLContent) ;
-$emailHTMLContent = str_replace("{notif_topicId}", $topicId, $emailHTMLContent) ;
-$emailHTMLContent = str_replace("{notif_topicTitle}", $topicTitle, $emailHTMLContent) ;
-$emailHTMLContent = str_replace("{notif_topicFromToText}", $topicFromToText, $emailHTMLContent) ;
-$emailHTMLContent = str_replace("{notif_topicDistance}", $topicDistance, $emailHTMLContent) ;
-$emailHTMLContent = str_replace("{notif_topicUrlPrefix}", topicUrlPrefix, $emailHTMLContent) ;
-$emailHTMLContent = str_replace("{notif_mapUrlPrefix}", mapUrlPrefix, $emailHTMLContent) ;
-$emailHTMLContent = str_replace("{notif_forumUcpUrl}", forumUcpUrl, $emailHTMLContent) ;
-$emailHTMLContent = str_replace("{notif_forumTechUrl}", forumTechUrl, $emailHTMLContent) ;
+					$mail = new SendGrid\Mail();
 
-echo $emailHTMLContent;
+					// TODO plain text email? do we even need plain text anymore?
+					$content = new SendGrid\Content("text/plain", "some text here");
+					$mail->addContent($content);
 
-$content = new SendGrid\Content("text/html", $emailHTMLContent);
-$mail->addContent($content);
+					$content = new SendGrid\Content("text/html", $emailHTMLContent);
+					$mail->addContent($content);
 
+					$from = new SendGrid\Email("Pilots N Paws forum", "forum@pilotsnpaws.org");
+					$mail->setFrom($from);
+					$mail->setSubject("[TEST] PNP New Trip: $topicFromToText");
 
-$mail->setFrom($from);
-$mail->setSubject("Forum testing");
-
-$personalization = new SendGrid\Personalization();
-$email = new SendGrid\Email("Mike", "nekbet@gmail.com");
-$personalization->addTo($email);
-$mail->addPersonalization($personalization);
+					$personalization = new SendGrid\Personalization();
+					$email = new SendGrid\Email("Mike", "nekbet@gmail.com");
+					// $email = new SendGrid\Email($userName, $userEmail);
+					$personalization->addTo($email);
+					$mail->addPersonalization($personalization);
 
 
-// categories
-$mail->addCategory("Local test");
-// google analytics
-// $ganalytics = new SendGrid\Ganalytics();
-// $ganalytics->setEnable(true);
-// $ganalytics->setCampaignSource("trip-notification");
-// // $ganalytics->setCampaignTerm("unused");
-// $ganalytics->setCampaignContent("distance-notification"); // TODO this should be set by which notif fires the email, home airport, dist, etc
-// // $ganalytics->setCampaignName("unused");
-// $ganalytics->setCampaignMedium("email");
-// $tracking_settings->setGanalytics($ganalytics);
-// $mail->setTrackingSettings($tracking_settings);
+					// categories
+					// TODO add more data as we can for tracking in emails
+					$mail->addCategory("Local test");
+					$tracking_settings = new SendGrid\TrackingSettings();
+					// google analytics
+					$ganalytics = new SendGrid\Ganalytics();
+					$ganalytics->setEnable(true);
+					$ganalytics->setCampaignSource("trip-notification");
+					// // $ganalytics->setCampaignTerm("unused");
+					$ganalytics->setCampaignContent("distance-notification"); // TODO this should be set by which notif fires the email, home airport, dist, etc
+					// // $ganalytics->setCampaignName("unused");
+					$ganalytics->setCampaignMedium("email");
+					$tracking_settings->setGanalytics($ganalytics);
+					$mail->setTrackingSettings($tracking_settings);
 
-$sg = new \SendGrid($sgApiKey);
+					// flag for dev - false = no email sent
+					$sendMailFlag = false; 
+					echo "Send mail for real? $sendMailFlag";
+					newLine();
+						// send the email if we desire
+					if($sendMailFlag) {
+							$sendResult = sendMail($mail);
+							logSend($topicId, $userId, $sendResult, $aws_server, $aws_database);
+								}
+					else { // if false we mock a 202 response
+						$sendResult = '202';
+						logSend($topicId, $userId, $sendResult, $aws_server, $aws_database);
+					}
+
+	
+				} // end of iterate thru db
+			} // end of else
 
 
-// flag for dev - false = no email sent
-$sendMail = false; 
+} // end buildEmails function
 
-// send the email
-if($sendMail) {
-    $response = $sg->client->mail()->send()->post($mail);
-    echo $response->statusCode();
-    newline();
-    echo $response->headers();
-    newline();
-    echo $response->body();
-    newline();
-    }
+function sendMail($mail) {
+	global $sgApiKey ; 
+	$apiKey = $sgApiKey;
+	$sg = new \SendGrid($apiKey);
+	$response = $sg->client->mail()->send()->post($mail);
+	
+	$httpStatusCode = $response->statusCode();
+	
+	echo $response->statusCode();
+	newline();
+	echo $response->headers();
+	newline();
+	echo $response->body();
+	newline();
+	
+	return $httpStatusCode;
+}
   
-
-// TODO send notifications
-// TODO add as much data as we can for tracking in emails
 // TODO make sure we log when sent
 
+function logSend($topicId, $userId, $statusCode, $serverName, $databaseName) {
+	global $aws_mysqli, $tableNotif;
+	
+	if($statusCode == '202') {
+			$notifyStatus = "Success";
+		} else {
+			$notifyStatus = "Fail";	
+		}
+	echo ("Sendgrid result for topic $topicId for user $userId was $statusCode");
+	newLine();
+	// save to db so we don't send to them again
+	$logQuery = "INSERT INTO $tableNotif (topic_id, user_id, notify_status, status_code, created_ts, source_server, source_database) " .
+					" VALUES ('$topicId', '$userId', '$notifyStatus', '$statusCode', CURRENT_TIMESTAMP, '$serverName', '$databaseName'  );";
+	$logQueryResult = $aws_mysqli->query($logQuery);
+	$rowsInserted = $aws_mysqli->affected_rows; 
+	echo nl2br ("Rows inserted: $rowsInserted \n");
+
+	if($rowsInserted == 0) {
+		echo logEvent("Logging send failed insert: $logQuery");
+		newLine();
+		// TODO notify here if we didn't insert anything, would be a problem
+	}
+
+}
 
 // close connections
 $f_mysqli->close();
 $aws_mysqli->close();
+
 
 
 ?>

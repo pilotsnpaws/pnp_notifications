@@ -90,7 +90,8 @@ function getMaxAWS()
 function getNextForum($maxTopic)
 {	
 	global $forum_id, $f_mysqli, $tableTopics;
-
+	$topic_id = '';
+	
 	// from forum db, get the next higher # topic 
 	$query_get_next_topic = "SELECT min(topic_id) as min_topic_id, max(topic_id) as max_topic_id " .
 		" FROM $tableTopics " .
@@ -176,7 +177,7 @@ function insertTopic($topic_id, $forum_id, $topic_title, $topic_first_poster_nam
 // get sending zip coordinates, TODO this should be moved to its own function to just return lat/lon by any zip
 	$zipQuery = "SELECT lat, lon FROM zipcodes WHERE zip = '$pnp_sendZip' LIMIT 1" ; // we should only have one entry per zip, but just in case limit
 	$zipResult = $f_mysqli->query($zipQuery);
-	if(!zipResult) {
+	if(!$zipResult) {
 			echo logEvent("Error: $aws_mysqli->error for zip query: $zipQuery");
 			newline();
 		} else
@@ -196,7 +197,7 @@ function insertTopic($topic_id, $forum_id, $topic_title, $topic_first_poster_nam
 // repeat for receiving zip coords, again TODO - use function on cleanup
 	$zipQuery = "SELECT lat, lon FROM zipcodes WHERE zip = '$pnp_recZip' LIMIT 1" ; // we should only have one entry per zip, but just in case limit
 	$zipResult = $f_mysqli->query($zipQuery);
-	if(!zipResult) {
+	if(!$zipResult) {
 			echo logEvent("Error: $aws_mysqli->error for zip query: $zipQuery");
 			newLine();
 		} else

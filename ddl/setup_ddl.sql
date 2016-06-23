@@ -4,6 +4,8 @@ create table pnp_trip_notif_status
     topic_id 	MEDIUMINT(8),
     user_id 	MEDIUMINT(8),
     notify_status TINYINT(1),
+	  status_code VARCHAR(10),
+    created_ts				TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
     ) ENGINE=InnoDB ;
 
