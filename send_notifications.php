@@ -4,6 +4,9 @@
 // this is intended to replace the custom functions_posting.php for distance based notif's only
 // new activity/forum-following notifs will continue to come from the phpbb functionality
 
+//todo - show trip map image - like https://maps.googleapis.com/maps/api/staticmap?size=600x400&path=color:0xff0000ff|weight:5|91406|96150&key=AIzaSyB3rWsXKJiE_1EeDykiqOvwZqOe1gEaEac
+
+
 // include forum config file for DB info
 include "settings.php";
 include ($configPath);
@@ -16,8 +19,6 @@ newline();
 
 // show IP for now in dev, just so we know when it changes to manage the AWS firewall
 // showIP();
-
-$sendMailFlag = true; 
 
 // define the prefix of each log message
 $logType = '[send notif]'; 
@@ -105,7 +106,7 @@ function getNextTopic() {
 	$nextTopicQuery = "SELECT min(t.topic_id) as min_topic_id" .
 		" FROM pnp_topics t " .
 		"		LEFT OUTER JOIN pnp_trip_notif_status n on t.topic_id = n.topic_id " .
-		" WHERE t.created_ts > date_add(CURRENT_TIMESTAMP, INTERVAL -3 HOUR) " .
+		" WHERE t.created_ts > date_add(CURRENT_TIMESTAMP, INTERVAL -1 HOUR) " .
 		" and t.source_server = '$f_server'  " .
 		" and t.source_database = '$f_database' " .
 		" and (n.notify_status is null OR n.notify_status = 0) " .
@@ -244,9 +245,9 @@ function buildEmails($topicId, $topicFromToText) {
 					$mail->addPersonalization($personalization);
 
 
-					// categories
+					// categories, category comes from settings.php
 					// TODO add more data as we can for tracking in emails
-					$mail->addCategory("Local test");
+					$mail->addCategory($notificationEmailSendGridCategory);
 					$tracking_settings = new SendGrid\TrackingSettings();
 					// google analytics
 					$ganalytics = new SendGrid\Ganalytics();
@@ -260,6 +261,7 @@ function buildEmails($topicId, $topicFromToText) {
 					$mail->setTrackingSettings($tracking_settings);
 
 					// flag for dev - false = no email sent
+					// this is set in settings.php
 					echo "Send mail for real? $sendMailFlag";
 					newLine();
 						// send the email if we desire
