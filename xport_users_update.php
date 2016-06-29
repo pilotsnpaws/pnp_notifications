@@ -43,7 +43,8 @@ echo nl2br ("Forum database: $f_server/$f_database \n" ) ;
  // Check forum connection
 if (mysqli_connect_errno($f_mysqli))
   {
-  echo "Failed to connect to forum MySQL: " . mysqli_connect_error();
+		echo logEvent("Failed to connect to forum MySQL: " . mysqli_connect_error());
+		exit();
   } else { } ;
 
 // define AWS mysqli connection
@@ -54,12 +55,13 @@ echo nl2br ("AWS database: $aws_server/$aws_database \n\n" ) ;
  // Check AWS connection
 if (mysqli_connect_errno($aws_mysqli))
   {
-  echo "Failed to connect to AWS MySQL: " . mysqli_connect_error();
+		echo logEvent("Failed to connect to AWS MySQL: " . mysqli_connect_error());
+		exit();
   } else { } ;
 
 
-// TODO: Get list of users from forum that have recent activity
-// TODO: Run sql update on AWS with latest info
+// Get list of users from forum that have recent activity
+// Run sql update on AWS with latest info
 
 //get start time to see how long this takes for logging
 $startTS = microtime(true);

@@ -34,7 +34,8 @@ echo nl2br ("Forum database: $f_server/$f_database \n" ) ;
  // Check forum connection
 if (mysqli_connect_errno($f_mysqli))
   {
-  echo "Failed to connect to forum MySQL: " . mysqli_connect_error();
+  	echo logEvent("Failed to connect to forum MySQL: " . mysqli_connect_error());
+		exit();
   } else { } ;
 
 // define AWS mysqli connection
@@ -45,7 +46,8 @@ echo nl2br ("AWS database: $aws_server/$aws_database \n\n" ) ;
  // Check AWS connection
 if (mysqli_connect_errno($aws_mysqli))
   {
-  echo "Failed to connect to AWS MySQL: " . mysqli_connect_error();
+  	echo logEvent("Failed to connect to AWS MySQL: " . mysqli_connect_error());
+		exit();
   } else { } ;
 
 
