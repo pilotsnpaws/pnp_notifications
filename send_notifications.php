@@ -75,9 +75,7 @@ where t.topic_id = $topicId " .
 $result = $aws_mysqli->query($queryGetTopicDetails);
 $rowsReturned = $result->num_rows; 
 if($rowsReturned == 0) {
-  echo logEvent("Topic details query returned no rows.");
-	newLine();
-	echo $queryGetTopicDetails;
+  echo logEvent("Topic details query returned no rows, query: $queryGetTopicDetails");
 	exit();
 }
   elseif($rowsReturned == 1) {
@@ -90,8 +88,8 @@ if($rowsReturned == 0) {
     }
   }
   else { 
-    echo logEvent("Topic details query returned > 1 row. Something is wrong. ");
-				exit(); // dont do anything else in this case. gotta fix. 
+    echo logEvent("Topic details query returned > 1 row. Something is wrong. Query: $queryGetTopicDetails");
+		exit(); // dont do anything else in this case. gotta fix. 
 }
  
 
@@ -151,6 +149,9 @@ function cityStateByZip($zipCode) {
 
 function buildEmails($topicId, $topicFromToText) {
 	global $aws_server, $aws_database, $aws_mysqli, $f_server, $f_database,  $emailHead, $emailBody, $sendMailFlag;
+	
+	$emailSentCounter = 0;
+	
 		// TODO figure out what users get that topic's notif based on their settings
 		$queryUsersToNotify = "select DISTINCT t.topic_id, n.notify_status,
 				u.user_id, u.user_email, u.username, u.pf_flying_radius, u.apt_id, 
@@ -265,6 +266,7 @@ function buildEmails($topicId, $topicFromToText) {
 					if($sendMailFlag) {
 						$sendResult = sendMail($mail);
 						logSend($topicId, $userId, $sendResult, $f_server, $f_database);
+						$emailSentCounter++;
 								}
 					else { // if false we mock a 202 response
 						$sendResult = '202';
@@ -274,7 +276,9 @@ function buildEmails($topicId, $topicFromToText) {
 	
 				} // end of iterate thru db
 			} // end of else
-
+	
+	echo logEvent("Users returned: $rowsReturned, Emails sent: $emailSentCounter");
+	// todo - add check here to make sure it matches
 
 } // end buildEmails function
 
