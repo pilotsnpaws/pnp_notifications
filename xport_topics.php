@@ -89,13 +89,14 @@ function getMaxAWS()
 
 function getNextForum($maxTopic)
 {	
-	global $forum_id, $f_mysqli, $tableTopics;
+	global $forum_id, $f_mysqli, $f_database, $tableTopics;
 	$topic_id = '';
 	
 	// from forum db, get the next higher # topic 
 	$query_get_next_topic = "SELECT min(topic_id) as min_topic_id, max(topic_id) as max_topic_id " .
 		" FROM $tableTopics " .
-		" WHERE forum_id = $forum_id AND topic_id > $maxTopic" . 
+		" WHERE forum_id = $forum_id " .
+		" AND topic_id > $maxTopic" . 
 		" HAVING max_topic_id IS NOT NULL " ;
 	echo nl2br("Forum query: $query_get_next_topic\n");
 

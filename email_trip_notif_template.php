@@ -341,13 +341,17 @@ $emailBody = '<body style="width: 100% !important;min-width: 100%;-webkit-text-s
                         <tr>
                             <td>
                     <![endif]-->
-                    <table class="container" style="border-spacing: 0;border-collapse: collapse;vertical-align: top;max-width: 575px;margin: 0 auto;text-align: inherit" cellpadding="0" cellspacing="0" align="center" width="100%" border="0"><tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" width="100%"><table class="block-grid" style="border-spacing: 0;border-collapse: collapse;vertical-align: top;width: 100%;max-width: 575px;color: #333;background-color: transparent" cellpadding="0" cellspacing="0" width="100%" bgcolor="transparent"><tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;text-align: center;font-size: 0"><!--[if (gte mso 9)|(IE)]><table width="100%" align="center" bgcolor="transparent" cellpadding="0" cellspacing="0" border="0"><tr><![endif]--><!--[if (gte mso 9)|(IE)]><td valign="top" width="500"><![endif]--><div class="col num12" style="display: inline-block;vertical-align: top;width: 100%"><table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" align="center" width="100%" border="0"><tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;background-color: transparent;padding-top: 25px;padding-right: 0px;padding-bottom: 25px;padding-left: 0px;border-top: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-left: 0px solid transparent">
+                    <table class="container" style="border-spacing: 0;border-collapse: collapse;vertical-align: top;max-width: 575px;margin: 0 auto;text-align: inherit" cellpadding="0" cellspacing="0" align="center" width="100%" border="0"><tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" width="100%"><table class="block-grid" style="border-spacing: 0;border-collapse: collapse;vertical-align: top;width: 100%;max-width: 575px;color: #333;background-color: transparent" cellpadding="0" cellspacing="0" width="100%" bgcolor="transparent"><tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;text-align: center;font-size: 0"><!--[if (gte mso 9)|(IE)]><table width="100%" align="center" bgcolor="transparent" cellpadding="0" cellspacing="0" border="0"><tr><![endif]--><!--[if (gte mso 9)|(IE)]><td valign="top" width="500"><![endif]--><div class="col num12" style="display: inline-block;vertical-align: top;width: 100%"><table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" align="center" width="100%" border="0"><tbody><tr style="vertical-align: top">
+                      <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;background-color: transparent;padding-top: 5px;
+                        padding-right: 0px;padding-bottom: 5px;padding-left: 0px;border-top: 0px solid transparent;border-right: 0px solid transparent;
+                        border-bottom: 0px solid transparent;border-left: 0px solid transparent">
 <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" width="100%" border="0" cellspacing="0" cellpadding="0">
   <tbody><tr style="vertical-align: top">
     <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" align="center" valign="top">
       <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0">
         <tbody><tr style="vertical-align: top">
-          <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;text-align: center;padding-top: 10px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px;max-width: 213px" align="center" valign="top">
+          <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;text-align: center;
+            padding-top: 10px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px;max-width: 213px" align="center" valign="top">
 
             <!--[if (gte mso 9)|(IE)]>
             <table width="223" align="left" border="0" cellspacing="0" cellpadding="0">
@@ -357,8 +361,6 @@ $emailBody = '<body style="width: 100% !important;min-width: 100%;-webkit-text-s
             <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" width="100%" align="left" cellpadding="0" cellspacing="0" border="0">
               <tbody><tr style="vertical-align: top">
                 <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" align="left" valign="middle">
-
-
                   <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top;padding: 0 10px 5px 0" align="left" border="0" cellspacing="0" cellpadding="0" height="37">
                       <tbody><tr style="vertical-align: top">
                           <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" width="42" align="left" valign="middle">
@@ -411,12 +413,6 @@ $emailBody = '<body style="width: 100% !important;min-width: 100%;-webkit-text-s
   </tr>
 </tbody></table><table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" width="100%">
   <tbody><tr style="vertical-align: top">
-    <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 10px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px">
-        <div style="color:#bbbbbb;line-height:120%;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;">            
-        	<div style="font-size:18px;line-height:22px;text-align:center;color:#bbbbbb;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;"><p style="margin: 0;font-size: 18px;line-height: 22px;text-align: center"><span style="font-size: 14px; line-height: 16px;">
-          This is a sample template from BEE free email editor</span><br><span style="font-size: 14px; line-height: 16px;">Visit <span style="text-decoration: underline; line-height: 16px; font-size: 14px;"><strong><a style="color:#C7702E" href="http://beefree.io/" target="_blank">beefree.io</a></strong></span>&nbsp;to create beautiful and rich email messages at no cost.</span></p></div>
-        </div>
-    </td>
   </tr>
 </tbody></table>
 </td></tr></tbody></table></div><!--[if (gte mso 9)|(IE)]></td><![endif]--><!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]--></td></tr></tbody></table></td></tr></tbody></table>

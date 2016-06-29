@@ -126,7 +126,7 @@ function getNextUserForum($maxUserAWS)
 		" city, state, CURRENT_TIMESTAMP " . 
  		" FROM $table_users_details " .
  		" WHERE user_id > $maxUserAWS " .
- 		" ORDER BY user_id LIMIT 500 "; // increase once we know it won't blow up
+ 		" ORDER BY user_id LIMIT 1000 "; // increase once we know it won't blow up
 	echo "getNextUserForum: $queryNextUserForum" ;
 	newLine();
 	$result = $f_mysqli->query($queryNextUserForum) or die ($f_mysqli->error);

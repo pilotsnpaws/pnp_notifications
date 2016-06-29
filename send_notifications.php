@@ -14,16 +14,10 @@ include "email_trip_notif_template.php";
 echo "Environment: $environment"; 
 newline();
 
-// show IP for now in dev, just so we know when it changes to manage teh AWS firewall
+// show IP for now in dev, just so we know when it changes to manage the AWS firewall
 // showIP();
 
-function showIP() {
-  $ch = curl_init('http://ifconfig.me/ip');
-  curl_setopt($ch,CURLOPT_RETURNTRANSFER,TRUE);
-  $myIp = curl_exec($ch);
-  echo "Server IP: $myIp";
-  newLine(); 
-}
+$sendMailFlag = true; 
 
 // define the prefix of each log message
 $logType = '[send notif]'; 
@@ -73,13 +67,16 @@ $topicId = getNextTopic();
 $queryGetTopicDetails = "select t.topic_id, t.topic_title, t.pnp_sendZip, t.pnp_recZip,
     ROUND((ST_distance_sphere(t.send_location_point, t.rec_location_point) / 1609),0) as trip_dist
 from pnp_topics t
-where t.topic_id = $topicId";
+where t.topic_id = $topicId " .
+	" and t.source_server = '$f_server' and t.source_database = '$f_database' ;";
 
 $result = $aws_mysqli->query($queryGetTopicDetails);
 $rowsReturned = $result->num_rows; 
 if($rowsReturned == 0) {
   echo logEvent("Topic details query returned no rows.");
-  newLine();
+	newLine();
+	echo $queryGetTopicDetails;
+	exit();
 }
   elseif($rowsReturned == 1) {
     while($row = $result->fetch_assoc()){
@@ -91,8 +88,8 @@ if($rowsReturned == 0) {
     }
   }
   else { 
-     echo logEvent("Topic details query returned > 1 row. Something is wrong. ");
-
+    echo logEvent("Topic details query returned > 1 row. Something is wrong. ");
+				exit(); // dont do anything else in this case. gotta fix. 
 }
  
 
@@ -104,9 +101,33 @@ $mail = buildEmails($topicId, $topicFromToText);
 
 // TODO figure out what topics haven't been sent
 function getNextTopic() {
-  //get next topic to send out notifications
-  $nextTopicId = "41343";
-  return $nextTopicId;
+  global $aws_mysqli, $f_server, $f_database;
+	$nextTopicQuery = "SELECT min(t.topic_id) as min_topic_id" .
+		" FROM pnp_topics t " .
+		"		LEFT OUTER JOIN pnp_trip_notif_status n on t.topic_id = n.topic_id " .
+		" WHERE t.created_ts > date_add(CURRENT_TIMESTAMP, INTERVAL -3 HOUR) " .
+		" and t.source_server = '$f_server'  " .
+		" and t.source_database = '$f_database' " .
+		" and (n.notify_status is null OR n.notify_status = 0) " .
+		" HAVING min_topic_id IS NOT NULL; " ;
+	
+	$nextTopicResults = $aws_mysqli->query($nextTopicQuery) or die ($aws_mysqli->error);;
+	
+	$rowsReturned = $nextTopicResults->num_rows; 
+	
+	if($rowsReturned == 0) {
+			echo logEvent("No results for next topic. Something is wrong.");
+			newLine();
+			echo ("Query: $nextTopicQuery");
+			exit();
+		}
+		else {
+			$row = $nextTopicResults->fetch_assoc();
+			$nextTopicId = $row['min_topic_id'];
+			echo logEvent("Next topic is: $nextTopicId");
+			// $nextTopicId = "41217"; //41343
+			return $nextTopicId;
+		}
 }
 
 function getFromToText($sendZip, $recZip) {
@@ -127,9 +148,9 @@ function cityStateByZip($zipCode) {
 }
 
 function buildEmails($topicId, $topicFromToText) {
-	global $aws_server, $aws_database, $aws_mysqli, $emailHead, $emailBody;
+	global $aws_server, $aws_database, $aws_mysqli, $f_server, $f_database,  $emailHead, $emailBody, $sendMailFlag;
 		// TODO figure out what users get that topic's notif based on their settings
-		$queryUsersToNotify = "select DISTINCT t.topic_id, 
+		$queryUsersToNotify = "select DISTINCT t.topic_id, n.notify_status,
 				u.user_id, u.user_email, u.username, u.pf_flying_radius, u.apt_id, 
 				ROUND((ST_distance_sphere(u.location_point, t.send_location_point) / 1609),0) as send_dist,
 				ROUND((ST_distance_sphere(u.location_point, t.rec_location_point) / 1609),0) as rec_dist, t.topic_title, 
@@ -138,21 +159,24 @@ function buildEmails($topicId, $topicFromToText) {
 				ST_buffer(u.location_point, pf_flying_radius * 0.01455581689886) as flying_circle,
 				topic_linestring,
 				ST_Intersects(ST_buffer(u.location_point, pf_flying_radius * 0.01455581689886), topic_linestring) as intersects
-		from pnp_topics t JOIN 
-			pnp_users u on t.source_server = u.source_server and t.source_database = u.source_database
+		from pnp_topics t 
+			JOIN pnp_users u on t.source_server = u.source_server and t.source_database = u.source_database
+			LEFT OUTER JOIN pnp_trip_notif_status n on t.topic_id = n.topic_id AND u.user_id = n.user_id
+			    AND t.source_server = n.source_server and t.source_database = n.source_database
 		where 1=1
 			and t.topic_id = $topicId
 			and pf_flying_radius > 0 
 				and pf_pilot_yn = 1
 				and ST_Intersects(ST_buffer(u.location_point, pf_flying_radius * 0.01455581689886), topic_linestring) = 1
-				and t.source_server = 'mysql.pilotsnpaws.org' -- '$aws_server' 
-				and t.source_database = 'xpilotsnpaws-forum' -- '$aws_database'
-		order by t.topic_id, u.user_id limit 2;" ;
+				and t.source_server = '$f_server' 
+				and t.source_database = '$f_database'
+				and (n.notify_status is null OR n.notify_status = 0)
+		order by t.topic_id, u.user_id limit 3;" ;
 
 		echo $queryUsersToNotify;
 		newLine();
 
-		$result = $aws_mysqli->query($queryUsersToNotify);
+		$result = $aws_mysqli->query($queryUsersToNotify) or die ($aws_mysqli->error);;
 
 			$rowsReturned = $result->num_rows; 
 			echo nl2br ("Rows returned: $rowsReturned \n");
@@ -233,17 +257,16 @@ function buildEmails($topicId, $topicFromToText) {
 					$mail->setTrackingSettings($tracking_settings);
 
 					// flag for dev - false = no email sent
-					$sendMailFlag = false; 
 					echo "Send mail for real? $sendMailFlag";
 					newLine();
 						// send the email if we desire
 					if($sendMailFlag) {
-							$sendResult = sendMail($mail);
-							logSend($topicId, $userId, $sendResult, $aws_server, $aws_database);
+						$sendResult = sendMail($mail);
+						logSend($topicId, $userId, $sendResult, $f_server, $f_database);
 								}
 					else { // if false we mock a 202 response
 						$sendResult = '202';
-						logSend($topicId, $userId, $sendResult, $aws_server, $aws_database);
+						logSend($topicId, $userId, $sendResult, $f_server, $f_database);
 					}
 
 	
@@ -277,16 +300,16 @@ function logSend($topicId, $userId, $statusCode, $serverName, $databaseName) {
 	global $aws_mysqli, $tableNotif;
 	
 	if($statusCode == '202') {
-			$notifyStatus = "Success";
+			$notifyStatus = '1';
 		} else {
-			$notifyStatus = "Fail";	
+			$notifyStatus = '2';	
 		}
 	echo ("Sendgrid result for topic $topicId for user $userId was $statusCode");
 	newLine();
 	// save to db so we don't send to them again
 	$logQuery = "INSERT INTO $tableNotif (topic_id, user_id, notify_status, status_code, created_ts, source_server, source_database) " .
-					" VALUES ('$topicId', '$userId', '$notifyStatus', '$statusCode', CURRENT_TIMESTAMP, '$serverName', '$databaseName'  );";
-	$logQueryResult = $aws_mysqli->query($logQuery);
+					" VALUES ('$topicId', '$userId', $notifyStatus, '$statusCode', CURRENT_TIMESTAMP, '$serverName', '$databaseName'  );";
+	$logQueryResult = $aws_mysqli->query($logQuery)  or die ($aws_mysqli->error);
 	$rowsInserted = $aws_mysqli->affected_rows; 
 	echo nl2br ("Rows inserted: $rowsInserted \n");
 

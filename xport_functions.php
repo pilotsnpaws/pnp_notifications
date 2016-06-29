@@ -18,4 +18,12 @@ function logEvent($message) {
     }
 }
 
+function showIP() {
+  $ch = curl_init('http://ifconfig.me/ip');
+  curl_setopt($ch,CURLOPT_RETURNTRANSFER,TRUE);
+  $myIp = curl_exec($ch);
+  echo "Server IP: $myIp";
+  newLine(); 
+}
+
 ?>

@@ -112,7 +112,7 @@ while($row = $result->fetch_assoc()){
 	$updateResult = $aws_mysqli->query($queryUpdate) ; // or die ($aws_mysqli->error);
 
 	if(!$updateResult) {
-			echo logEvent("Error: $aws_mysqli->error for update: $queryInsert");
+			echo logEvent("Error: $aws_mysqli->error for update: $queryUpdate");
 		} else
 		{
 			echo logEvent("Success: $queryUpdate");
