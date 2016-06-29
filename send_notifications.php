@@ -267,6 +267,8 @@ function buildEmails($topicId, $topicFromToText) {
 						$sendResult = sendMail($mail);
 						logSend($topicId, $userId, $sendResult, $f_server, $f_database);
 						$emailSentCounter++;
+						echo logEvent("Email sent for topic $topicId to user $userId");
+						newLine();
 								}
 					else { // if false we mock a 202 response
 						$sendResult = '202';
