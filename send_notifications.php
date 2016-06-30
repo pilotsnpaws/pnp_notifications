@@ -150,7 +150,8 @@ function cityStateByZip($zipCode) {
 }
 
 function buildEmails($topicId, $topicFromToText) {
-	global $aws_server, $aws_database, $aws_mysqli, $f_server, $f_database,  $emailHead, $emailBody, $sendMailFlag;
+	global $aws_server, $aws_database, $aws_mysqli, $f_server, $f_database,  $emailHead, $emailBody, 
+		$sendMailFlag, $notificationEmailSendGridCategory, $sendMailRecipients;
 	
 	$emailSentCounter = 0;
 	
@@ -176,6 +177,7 @@ function buildEmails($topicId, $topicFromToText) {
 				and t.source_server = '$f_server' 
 				and t.source_database = '$f_database'
 				and (n.notify_status is null OR n.notify_status = 0)
+				and u.username in ('mikegreen', 'Lawman9328')
 		order by t.topic_id, u.user_id limit 3;" ;
 
 		echo $queryUsersToNotify;
@@ -240,8 +242,12 @@ function buildEmails($topicId, $topicFromToText) {
 					$mail->setSubject("[TEST] PNP New Trip: $topicFromToText");
 
 					$personalization = new SendGrid\Personalization();
-					$email = new SendGrid\Email("Mike", "nekbet@gmail.com");
-					// $email = new SendGrid\Email($userName, $userEmail);
+					// for testing
+					if ($sendMailRecipients) {
+						$email = new SendGrid\Email($userName, $userEmail);
+					} else {
+						$email = new SendGrid\Email("Mike", "nekbet@gmail.com");
+					}
 					$personalization->addTo($email);
 					$mail->addPersonalization($personalization);
 

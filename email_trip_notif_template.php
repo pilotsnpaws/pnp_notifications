@@ -177,20 +177,24 @@ $emailBody =
                             <td>
                     <![endif]-->
                     <table class="container" style="border-spacing: 0;border-collapse: collapse;vertical-align: top;max-width: 575px;margin: 0 auto;text-align: inherit" cellpadding="0" cellspacing="0" align="center" width="100%" border="0"><tbody><tr style="vertical-align: top">
-                    <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" width="100%"><table class="block-grid mixed-two-up" style="border-spacing: 0;border-collapse: collapse;vertical-align: top;width: 100%;max-width: 575px;color: #333;background-color: transparent" cellpadding="0" cellspacing="0" width="100%" bgcolor="transparent">
+                    <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" width="100%">
+                     <table class="block-grid mixed-two-up" style="border-spacing: 0;border-collapse: collapse;vertical-align: top;width: 100%;max-width: 575px;color: #333;background-color: transparent" cellpadding="0" cellspacing="0" width="100%" bgcolor="transparent">
                     <tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;text-align: center;font-size: 0"><!--[if (gte mso 9)|(IE)]><table width="100%" align="center" bgcolor="transparent" cellpadding="0" cellspacing="0" border="0"><tr><![endif]--><!--[if (gte mso 9)|(IE)]><td valign="top" width="167"><![endif]--><div class="col num4" style="display: inline-block;vertical-align: top;text-align: center;width: 167px"><table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" align="center" width="100%" border="0"><tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;background-color: transparent;padding-top: 15px;padding-right: 10px;padding-bottom: 15px;padding-left: 10px;border-top: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-left: 0px solid transparent"><table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" width="100%" border="0">
     <tbody><tr style="vertical-align: top">
         <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%;padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="right">
             <div style="font-size:14px" align="right">
 
-                <img class="right" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;width: 66px;max-width: 66px" align="right" border="0" src="http://www.pilotsnpaws.org/notif/images/pnplogo1.png" alt="Image" title="Image" width="66">
+                <img class="right" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;
+                clear: both;display: block;border: 0;height: auto;line-height: 100%;width: 66px;max-width: 66px" align="right" border="0" 
+                src="http://www.pilotsnpaws.org/notif/images/pnplogo1.png" alt="Pilots N Paws Logo" width="66">
             </div>
         </td>
     </tr>
 </tbody></table>
 </td></tr></tbody></table></div><!--[if (gte mso 9)|(IE)]></td><![endif]-->
 <!--[if (gte mso 9)|(IE)]><td valign="top" width="333"><![endif]-->
-<div class="col num8" style="display: inline-block;vertical-align: top;text-align: center;width: 333px"><table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" align="center" width="100%" border="0"><tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;background-color: transparent;padding-top: 15px;padding-right: 0px;padding-bottom: 15px;padding-left: 0px;border-top: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-left: 0px solid transparent"><table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" width="100%">
+<div class="col num8" style="display: inline-block;vertical-align: top;text-align: center;width: 333px">
+<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" align="center" width="100%" border="0"><tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;background-color: transparent;padding-top: 15px;padding-right: 0px;padding-bottom: 15px;padding-left: 0px;border-top: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-left: 0px solid transparent"><table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" width="100%">
   <tbody><tr style="vertical-align: top">
     <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 5px;padding-right: 10px;padding-bottom: 5px;padding-left: 10px">
         <div style="color:#555555;line-height:120%;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;">            
