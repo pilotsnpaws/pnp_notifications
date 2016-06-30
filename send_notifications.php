@@ -106,7 +106,7 @@ function getNextTopic() {
 	$nextTopicQuery = "SELECT min(t.topic_id) as min_topic_id" .
 		" FROM pnp_topics t " .
 		"		LEFT OUTER JOIN pnp_trip_notif_status n on t.topic_id = n.topic_id " .
-		" WHERE t.created_ts > date_add(CURRENT_TIMESTAMP, INTERVAL -1 HOUR) " .
+		" WHERE t.created_ts > date_add(CURRENT_TIMESTAMP, INTERVAL -48 HOUR) " .
 		" and t.source_server = '$f_server'  " .
 		" and t.source_database = '$f_database' " .
 		" and (n.notify_status is null OR n.notify_status = 0) " .
@@ -117,7 +117,7 @@ function getNextTopic() {
 	$rowsReturned = $nextTopicResults->num_rows; 
 	
 	if($rowsReturned == 0) {
-			echo logEvent("No results for next topic. Something is wrong.");
+			echo logEvent("No results for a new topic in the last hour. Exiting.");
 			newLine();
 			echo ("Query: $nextTopicQuery");
 			exit();
@@ -126,6 +126,7 @@ function getNextTopic() {
 			$row = $nextTopicResults->fetch_assoc();
 			$nextTopicId = $row['min_topic_id'];
 			echo logEvent("Next topic is: $nextTopicId");
+			newLine();
 			// $nextTopicId = "41217"; //41343
 			return $nextTopicId;
 		}
@@ -272,7 +273,7 @@ function buildEmails($topicId, $topicFromToText) {
 						echo logEvent("Email sent for topic $topicId to user $userId");
 						newLine();
 								}
-					else { // if false we mock a 202 response
+					else { // if false we mock a 202 response for testing
 						$sendResult = '202';
 						logSend($topicId, $userId, $sendResult, $f_server, $f_database);
 					}

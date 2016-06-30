@@ -17,7 +17,14 @@ $emailHead = '<!DOCTYPE html "-//w3c//dtd xhtml 1.0 transitional //en" "http://w
     <title>Pilots N Paws Trip Notification</title>
 </head>' ;
 
-$emailBody = '<body style="width: 100% !important;min-width: 100%;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100% !important;margin: 0;padding: 0;background-color: #FFFFFF">
+$emailBody = 
+  '<body style="width: 100% !important;min-width: 100%;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100% !important;
+  margin: 0;padding: 0;background-color: #FFFFFF">
+  
+  <div style="display: none; font-size: 0px; line-height: 0px; max-height: 0px; max-width: 0px; width: 0px; opacity: 0; overflow: hidden;">
+    A rescue has posted a new transport request near you. 
+  </div>
+  
   <style id="media-query">
     /* Client-specific Styles & Reset */
     #outlook a {
