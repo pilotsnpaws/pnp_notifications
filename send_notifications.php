@@ -132,8 +132,6 @@ function getNextTopic() {
 		}
 }
 
-
-
 function buildEmails($topicId, $topicFromToText) {
 	global $aws_server, $aws_database, $aws_mysqli, $f_server, $f_database,  $emailHead, $emailBody, 
 		$sendMailFlag, $notificationEmailSendGridCategory, $sendMailRecipients;
@@ -162,7 +160,7 @@ function buildEmails($topicId, $topicFromToText) {
 				and t.source_server = '$f_server' 
 				and t.source_database = '$f_database'
 				and (n.notify_status is null OR n.notify_status = 0)
-				and u.username in ('mikegreen', 'xLawman9328')
+				and u.username in ('mikegreen', 'Lawman9328', 'cainjm40')
 		order by t.topic_id, u.user_id limit 3;" ;
 
 		echo $queryUsersToNotify;
