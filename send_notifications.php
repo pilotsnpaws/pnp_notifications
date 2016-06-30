@@ -177,7 +177,7 @@ function buildEmails($topicId, $topicFromToText) {
 				and t.source_server = '$f_server' 
 				and t.source_database = '$f_database'
 				and (n.notify_status is null OR n.notify_status = 0)
-				and u.username in ('mikegreen', 'Lawman9328')
+				and u.username in ('mikegreen', 'xLawman9328')
 		order by t.topic_id, u.user_id limit 3;" ;
 
 		echo $queryUsersToNotify;
@@ -242,7 +242,7 @@ function buildEmails($topicId, $topicFromToText) {
 					$mail->setSubject("[TEST] PNP New Trip: $topicFromToText");
 
 					$personalization = new SendGrid\Personalization();
-					// for testing
+					// send to real emails or test? set in settings.php
 					if ($sendMailRecipients) {
 						$email = new SendGrid\Email($userName, $userEmail);
 					} else {

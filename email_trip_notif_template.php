@@ -259,12 +259,12 @@ $emailBody =
               <p style="margin: 0;font-size:16px;line-height: 17px">
                 <span style="font-size:18px; line-height: 19px;">
                   <a href="{notif_topicUrlPrefix}{notif_topicId}" 
-                  target="_blank">{notif_topicTitle}</a>
+                  target="_blank">{notif_topicFromToText}</a>
                 </span>
               </p>
               <p style="margin: 0;font-size: 16px;line-height: 17px">
                 <span style="font-size:14px; line-height: 14px;">
-                  {notif_topicFromToText}
+                  Trip title: {notif_topicTitle}
                 </span>
               </p>
             </div>
