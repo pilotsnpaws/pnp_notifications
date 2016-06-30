@@ -102,11 +102,11 @@ $mail = buildEmails($topicId, $topicFromToText);
 
 // TODO figure out what topics haven't been sent
 function getNextTopic() {
-  global $aws_mysqli, $f_server, $f_database;
+  global $aws_mysqli, $f_server, $f_database, $sendHoursBack;
 	$nextTopicQuery = "SELECT min(t.topic_id) as min_topic_id" .
 		" FROM pnp_topics t " .
 		"		LEFT OUTER JOIN pnp_trip_notif_status n on t.topic_id = n.topic_id " .
-		" WHERE t.created_ts > date_add(CURRENT_TIMESTAMP, INTERVAL -48 HOUR) " .
+		" WHERE t.created_ts > date_add(CURRENT_TIMESTAMP, INTERVAL -$sendHoursBack HOUR) " . // dont remove the - here, we need to go back
 		" and t.source_server = '$f_server'  " .
 		" and t.source_database = '$f_database' " .
 		" and (n.notify_status is null OR n.notify_status = 0) " .
@@ -117,7 +117,7 @@ function getNextTopic() {
 	$rowsReturned = $nextTopicResults->num_rows; 
 	
 	if($rowsReturned == 0) {
-			echo logEvent("No results for a new topic in the last hour. Exiting.");
+			echo logEvent("No results for a new topic in the last $sendHoursBack hours. Exiting.");
 			newLine();
 			echo ("Query: $nextTopicQuery");
 			exit();
