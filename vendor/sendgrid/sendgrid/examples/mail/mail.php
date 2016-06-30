@@ -10,8 +10,7 @@ $sg = new \SendGrid($apiKey);
 // Create a batch ID #
 // POST /mail/batch #
 
-$request_body = json_decode('null');
-$response = $sg->client->mail()->batch()->post($request_body);
+$response = $sg->client->mail()->batch()->post();
 echo $response->statusCode();
 echo $response->body();
 echo $response->headers();

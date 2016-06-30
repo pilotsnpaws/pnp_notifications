@@ -7,7 +7,7 @@
 
 /*
  * Calculate HMAC-SHA1 according to RFC2104
- * See http://www.faqs.org/rfcs/rfc2104.html 
+ * See http://www.faqs.org/rfcs/rfc2104.html
  */
 function hmacsha1($key,$data) {
     $blocksize=64;
@@ -28,7 +28,7 @@ function hmacsha1($key,$data) {
             );
     return bin2hex($hmac);
 }
- 
+
 /*
  * Used to encode a field for Amazon Auth
  * (taken from the Amazon S3 PHP example library)

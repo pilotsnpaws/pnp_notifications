@@ -60,16 +60,16 @@
         },
         {
             "name": "sendgrid/sendgrid",
-            "version": "5.0.0",
+            "version": "5.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sendgrid/sendgrid-php.git",
-                "reference": "9fb94f6a068a6bd887fed665fc33efcd301db486"
+                "reference": "75978ff6333bcee994c7e00aea84472f69e40587"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sendgrid/sendgrid-php/zipball/9fb94f6a068a6bd887fed665fc33efcd301db486",
-                "reference": "9fb94f6a068a6bd887fed665fc33efcd301db486",
+                "url": "https://api.github.com/repos/sendgrid/sendgrid-php/zipball/75978ff6333bcee994c7e00aea84472f69e40587",
+                "reference": "75978ff6333bcee994c7e00aea84472f69e40587",
                 "shasum": ""
             },
             "require": {
@@ -102,7 +102,7 @@
                 "send",
                 "sendgrid"
             ],
-            "time": "2016-06-14 17:16:47"
+            "time": "2016-06-18 00:34:59"
         },
         {
             "name": "sendgrid/smtpapi",
