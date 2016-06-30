@@ -9,7 +9,7 @@ function logEvent($message) {
 
     if ($message != '') {
         // Add a timestamp to the start of the $message
-        $message = date("Y/m/d H:i:s") . ': ' . $logType . ' ' . $message;
+        $message = gmDate(DATE_ATOM) . ': ' . $logType . ' ' . $message;
         // todo: move this logic to settings.php ? 
 		$fp = fopen($logPath, 'a');
         fwrite($fp, $message."\n");
