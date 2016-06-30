@@ -142,11 +142,25 @@ function getFromToText($sendZip, $recZip) {
 
 function cityStateByZip($zipCode) {
 	$lookupCall = file_get_contents('http://ziptasticapi.com/' . $zipCode);
+	// $lookupCall = file_get_contents('http://ziptasticapi.com/31717');
 	
 	$output = json_decode($lookupCall);
-	$city = ucwords(strToLower($output->city));
-	$state = $output->state;
-	return "$city, $state";
+
+	// make sure city is returned, if not could be invalid zip code
+	if (array_key_exists('city',$output)) {
+			$city = ucwords(strToLower($output->city));
+			$state = $output->state;
+			return "$city, $state";
+	} 
+	else {
+			echo logEvent("Error looking up city/state for $zipCode. Exiting.");
+			newLine();
+			exit();
+	}
+	
+	echo array_key_exists('error',$output);
+	echo ("error: $output->error");
+
 }
 
 function buildEmails($topicId, $topicFromToText) {
