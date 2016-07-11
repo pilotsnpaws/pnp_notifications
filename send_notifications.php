@@ -164,7 +164,8 @@ function buildEmails($topicId, $topicFromToText) {
 				and t.source_server = '$f_server' 
 				and t.source_database = '$f_database'
 				and (n.notify_status is null OR n.notify_status = 0)
-		order by t.topic_id, u.user_id limit 100;" ;
+				and ROUND((ST_distance_sphere(t.send_location_point, t.rec_location_point) / 1609),0) < 1000  /* exclude notifs on trips longer than 1000 */
+		order by t.topic_id, u.user_id ;" ;
 
 		echo $queryUsersToNotify;
 		newLine();
