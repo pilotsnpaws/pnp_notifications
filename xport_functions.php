@@ -26,6 +26,8 @@ function getFromToText($sendZip, $recZip) {
   return $fromToText;
 }
 
+// take a zipcode and return the city and state
+//  cityStateByZip(32507) -> "Pensacola, FL" 
 function cityStateByZip($zipCode) {
 	$lookupCall = file_get_contents('http://ziptasticapi.com/' . $zipCode);
 	// $lookupCall = file_get_contents('http://ziptasticapi.com/31717');
