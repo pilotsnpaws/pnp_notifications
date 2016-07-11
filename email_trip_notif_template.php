@@ -300,7 +300,12 @@ $emailBody =
           </p>
             <p style="margin: 0;font-size:14px;line-height: 14px"><br data-mce-bogus="1"></p><p style="margin: 0;font-size:14px;line-height: 14px">
             To reply to this trip request, please use the links above and do&nbsp;not reply to this email.
-            Replies to this email are not sent back to the trip requestor.&nbsp;
+            Replies to this email are not sent back to the trip requestor.
+            <br>
+            <br>
+              <b>
+                If you have any issues, questions or suggestions about this new trip email format - please post a reply on <a href="http://www.pilotsnpaws.org/forum/viewtopic.php?f=17&t=41713">this topic</a> in the forum.
+              </b>
             </p>
           </div>
         </div>

@@ -100,7 +100,7 @@ $mail = buildEmails($topicId, $topicFromToText);
 // end magic
 
 
-// TODO figure out what topics haven't been sent
+// figure out what topics haven't been sent
 function getNextTopic() {
   global $aws_mysqli, $f_server, $f_database, $sendHoursBack;
 	$nextTopicQuery = "SELECT min(t.topic_id) as min_topic_id" .
@@ -133,6 +133,10 @@ function getNextTopic() {
 }
 
 function buildEmails($topicId, $topicFromToText) {
+
+	//get start time to see how long this takes for logging
+	$startTS = microtime(true);
+
 	global $aws_server, $aws_database, $aws_mysqli, $f_server, $f_database,  $emailHead, $emailBody, 
 		$sendMailFlag, $notificationEmailSendGridCategory, $sendMailRecipients;
 	
@@ -160,8 +164,7 @@ function buildEmails($topicId, $topicFromToText) {
 				and t.source_server = '$f_server' 
 				and t.source_database = '$f_database'
 				and (n.notify_status is null OR n.notify_status = 0)
-				and u.username in ('mikegreen', 'Lawman9328', 'cainjm40')
-		order by t.topic_id, u.user_id limit 3;" ;
+		order by t.topic_id, u.user_id limit 100;" ;
 
 		echo $queryUsersToNotify;
 		newLine();
@@ -225,11 +228,12 @@ function buildEmails($topicId, $topicFromToText) {
 					$mail->setSubject("[TEST] PNP New Trip: $topicFromToText");
 
 					$personalization = new SendGrid\Personalization();
-					// send to real emails or test? set in settings.php
+					// send to real emails or test? set in settings.php 
+					// this doesnt control if we actually send a message - that is by $sendMailFlag
 					if ($sendMailRecipients) {
 						$email = new SendGrid\Email($userName, $userEmail);
 					} else {
-						$email = new SendGrid\Email("Mike", "nekbet@gmail.com");
+						$email = new SendGrid\Email("Mike+$userName", "nekbet+$userName@gmail.com");
 					}
 					$personalization->addTo($email);
 					$mail->addPersonalization($personalization);
@@ -271,12 +275,19 @@ function buildEmails($topicId, $topicFromToText) {
 				} // end of iterate thru db
 			} // end of else
 	
-	echo logEvent("Users returned: $rowsReturned, Emails sent: $emailSentCounter");
+	$endTS = microtime(true);
+	$durationTime = round($endTS - $startTS , 2);
+	echo logEvent("Users returned: $rowsReturned, Emails sent: $emailSentCounter Duration: $durationTime seconds");
+	newLine(); 
 	// todo - add check here to make sure it matches
 
+	
 } // end buildEmails function
 
 function sendMail($mail) {
+	//get start time to see how long this takes for logging
+	$startTS = microtime(true);
+
 	global $sgApiKey ; 
 	$apiKey = $sgApiKey;
 	$sg = new \SendGrid($apiKey);
@@ -290,6 +301,11 @@ function sendMail($mail) {
 	newline();
 	echo $response->body();
 	newline();
+
+	$endTS = microtime(true);
+	$durationTime = $endTS - $startTS;
+	echo logEvent("Duration: $durationTime seconds for sendMail");
+	newLine();
 	
 	return $httpStatusCode;
 }
