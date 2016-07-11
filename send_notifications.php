@@ -226,15 +226,16 @@ function buildEmails($topicId, $topicFromToText) {
 
 					$from = new SendGrid\Email("Pilots N Paws forum", "forum@pilotsnpaws.org");
 					$mail->setFrom($from);
-					$mail->setSubject("[TEST] PNP New Trip: $topicFromToText");
 
 					$personalization = new SendGrid\Personalization();
 					// send to real emails or test? set in settings.php 
 					// this doesnt control if we actually send a message - that is by $sendMailFlag
 					if ($sendMailRecipients) {
 						$email = new SendGrid\Email($userName, $userEmail);
+						$mail->setSubject("PNP New Trip: $topicFromToText");
 					} else {
 						$email = new SendGrid\Email("Mike+$userName", "nekbet+$userName@gmail.com");
+						$mail->setSubject("[TEST] PNP New Trip: $topicFromToText");
 					}
 					$personalization->addTo($email);
 					$mail->addPersonalization($personalization);
