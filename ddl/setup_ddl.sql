@@ -38,12 +38,13 @@ create unique index idx_topics on pnp_topics (source_server, source_database, fo
 
 -- drop table pnp_users
 CREATE TABLE pnp_users (
-    id  			INT NOT NULL AUTO_INCREMENT,
+	id  			INT NOT NULL AUTO_INCREMENT,
 	last_visit 		TIMESTAMP NOT NULL,
 	user_id 		MEDIUMINT NOT NULL,
-    user_email		VARCHAR(255) NOT NULL,
+  user_email		VARCHAR(255) NOT NULL,
 	user_regdate 	INT NOT NULL,
 	username 		VARCHAR(255) NOT NULL,
+	user_inactive_reason	TINYINT,
 	pf_flying_radius MEDIUMINT ,
 	pf_foster_yn 	VARCHAR(1) ,
 	pf_pilot_yn 	VARCHAR(1) NOT NULL DEFAULT 0,
@@ -52,14 +53,14 @@ CREATE TABLE pnp_users (
 	zip 			VARCHAR(5) NOT NULL DEFAULT '00000',
 	lat 			decimal(12,6) NOT NULL,
 	lon 			decimal(12,6) NOT NULL,
-    location_point	point, 
+  location_point	point, 
 	city 			VARCHAR(40),
 	state 			VARCHAR(2),
-    created_ts		TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_ts		TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    updated_source_ts TIMESTAMP NOT NULL, 
-    source_server	VARCHAR(100),
-    source_database	VARCHAR(64),
+  created_ts		TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_ts		TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  updated_source_ts TIMESTAMP NOT NULL, 
+  source_server	VARCHAR(100),
+	source_database	VARCHAR(64),
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB ;
 

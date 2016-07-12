@@ -159,12 +159,13 @@ function buildEmails($topicId, $topicFromToText) {
 		where 1=1
 			and t.topic_id = $topicId
 			and pf_flying_radius > 0 
-				and pf_pilot_yn = 1
-				and ST_Intersects(ST_buffer(u.location_point, pf_flying_radius * 0.01455581689886), topic_linestring) = 1
-				and t.source_server = '$f_server' 
-				and t.source_database = '$f_database'
-				and (n.notify_status is null OR n.notify_status = 0)
-				and ROUND((ST_distance_sphere(t.send_location_point, t.rec_location_point) / 1609),0) < 1000  /* exclude notifs on trips longer than 1000 */
+			and pf_pilot_yn = 1
+			and ST_Intersects(ST_buffer(u.location_point, pf_flying_radius * 0.01455581689886), topic_linestring) = 1
+			and t.source_server = '$f_server' 
+			and t.source_database = '$f_database'
+			and (n.notify_status is null OR n.notify_status = 0)
+			and ROUND((ST_distance_sphere(t.send_location_point, t.rec_location_point) / 1609),0) < 1000  /* exclude notifs on trips longer than 1000 */
+			and user_inactive_reason = 0 /* include active only, exclude deactivated users */
 		order by t.topic_id, u.user_id ;" ;
 
 		echo $queryUsersToNotify;

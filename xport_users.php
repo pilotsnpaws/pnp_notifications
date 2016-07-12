@@ -90,24 +90,29 @@ function getMaxUserAWS()
 		" HAVING max_user_id IS NOT NULL;" ;
 	echo $queryMaxUserAWS;
 	newLine();
-	$result = $aws_mysqli->query($queryMaxUserAWS) or die ($aws_mysqli->error);
+	$result = $aws_mysqli->query($queryMaxUserAWS); // or die ($aws_mysqli->error);
 
-	$rowsReturned = $result->num_rows; 
-	echo nl2br ("Rows returned: $rowsReturned \n") ; 
+	if(!$result) {
+			echo logEvent("Error $aws_mysqli->error to get max user id from AWS, exiting. Query: $queryMaxUserAWS");
+			exit();
+	} else {
+			$rowsReturned = $result->num_rows; 
+			echo nl2br ("Rows returned: $rowsReturned \n") ; 
 
-	if($rowsReturned == 0) {
-		echo logEvent("AWS has no users, starting from 0");
-		newLine();
-		$userId = 0;
+			if($rowsReturned == 0) {
+				echo logEvent("AWS has no users, starting from 0");
+				newLine();
+				$userId = 0;
+			}
+				else {
+				while($row = $result->fetch_assoc()){
+					$userId = $row['max_user_id'];
+					echo logEvent("Max user_id from AWS: $userId");
+					newline();
+				}
+			}
 	}
-		else {
-		while($row = $result->fetch_assoc()){
-			$userId = $row['max_user_id'];
-			echo logEvent("Max user_id from AWS: $userId");
-			newline();
-		}
-	}
-
+	
 	return $userId;
 }
 
@@ -125,9 +130,10 @@ function getNextUserForum($maxUserAWS)
 
 	$queryNextUserForum = "SELECT last_visit, user_id,user_email,user_regdate,username,pf_flying_radius, " .
 		" pf_foster_yn, pf_pilot_yn, apt_id, apt_name, zip, COALESCE(lat,0) as lat , COALESCE(lon,0) as lon, " .
-		" city, state, CURRENT_TIMESTAMP " . 
+		" city, state, CURRENT_TIMESTAMP, user_inactive_reason " . 
  		" FROM $table_users_details " .
  		" WHERE user_id > $maxUserAWS " .
+		" 	and user_inactive_reason = 0 /* include active only, exclude deactivated users */ " .
  		" ORDER BY user_id LIMIT 1000 "; // increase once we know it won't blow up
 	echo "getNextUserForum: $queryNextUserForum" ;
 	newLine();
@@ -150,6 +156,7 @@ function getNextUserForum($maxUserAWS)
 		$city = $f_mysqli->real_escape_string($row['city']);
 		$state = $row['state'];
 		$currentTimestamp = $row['CURRENT_TIMESTAMP'];
+		$userInactiveReason = $row['user_inactive_reason'];
 		echo logEvent("Next user_id from forum: $userId");
 		newLine();
 
@@ -157,12 +164,12 @@ function getNextUserForum($maxUserAWS)
 
 		$insertFields = " user_id, last_visit, user_email, user_regdate, username, pf_flying_radius, " .
 			" pf_foster_yn, pf_pilot_yn, apt_id, apt_name, zip, lat, lon, location_point, " .
-			" city, state, updated_source_ts, source_server, source_database " ; 
+			" city, state, updated_source_ts, source_server, source_database, user_inactive_reason " ; 
 		$queryInsert = " INSERT INTO $table_aws_users ($insertFields) VALUES " .
 			" ( $userId, '$lastVisit', '$userEmail', '$userRegdate', '$username', '$flyingRadius', " . 
 			" '$foster', '$pilot', '$aptId', '$aptName', '$zip', '$lat', '$lon', " .
 			" ST_GeomFromText('POINT($lon $lat)'), '$city', '$state', '$currentTimestamp', " .
-			" '$f_server', '$f_database'); ";
+			" '$f_server', '$f_database', $userInactiveReason); ";
 
 		$insertResult = $aws_mysqli->query($queryInsert) ; // or die ($aws_mysqli->error);
 
