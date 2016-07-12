@@ -84,6 +84,10 @@ if(!$result) {
 		echo logEvent("Error: $f_mysqli->error for query: $queryRecentActiveUsersForum , exiting.");
 		exit();
 } else {
+	
+		$rowsReturned = $result->num_rows; 
+		echo nl2br ("Rows returned: $rowsReturned \n") ; 
+	
 		while($row = $result->fetch_assoc()){ 
 		$userId = $row['user_id'];
 		$lastVisit = $row['last_visit'];
@@ -137,7 +141,7 @@ $endTS = microtime(true);
 echo "Ending microtime: $endTS";
 newline();
 $durationTime = $endTS - $startTS;
-echo logEvent("Duration: $durationTime seconds for $rowsSuccessCounter rows");
+echo logEvent("Duration: $durationTime seconds for $rowsSuccessCounter rows (rows returned from forum: $rowsReturned)");
 newLine();
 
 // close connections
