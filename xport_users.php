@@ -145,6 +145,7 @@ function getNextUserForum($maxUserAWS)
 		$userEmail = $f_mysqli->real_escape_string($row['user_email']);
 		$userRegdate = $row['user_regdate'];
 		$username = $f_mysqli->real_escape_string($row['username']);
+		$userInactiveReason = $row['user_inactive_reason'];
 		$flyingRadius = $row['pf_flying_radius'];
 		$foster = $row['pf_foster_yn'];
 		$pilot = $row['pf_pilot_yn'];
@@ -156,7 +157,6 @@ function getNextUserForum($maxUserAWS)
 		$city = $f_mysqli->real_escape_string($row['city']);
 		$state = $row['state'];
 		$currentTimestamp = $row['CURRENT_TIMESTAMP'];
-		$userInactiveReason = $row['user_inactive_reason'];
 		echo logEvent("Next user_id from forum: $userId");
 		newLine();
 

@@ -86,6 +86,7 @@ while($row = $result->fetch_assoc()){
 	$userEmail = $f_mysqli->real_escape_string($row['user_email']);
 	$userRegdate = $row['user_regdate'];
 	$username = $f_mysqli->real_escape_string($row['username']);
+	$userInactiveReason = $row['user_inactive_reason'];
 	$flyingRadius = $row['pf_flying_radius'];
 	$foster = $row['pf_foster_yn'];
 	$pilot = $row['pf_pilot_yn'];
@@ -108,7 +109,7 @@ while($row = $result->fetch_assoc()){
 		" pf_foster_yn = '$foster', pf_pilot_yn = '$pilot', apt_id = '$aptId', apt_name = '$aptName'," . 
 		" zip = '$zip', lat = '$lat', lon = '$lon', " .
 		" location_point = ST_GeomFromText('POINT($lon $lat)'), city = '$city', state = '$state', " . 
-		" updated_source_ts = '$currentTimestamp' " .
+		" updated_source_ts = '$currentTimestamp' , user_inactive_reason = $userInactiveReason " .
 		" WHERE user_id = $userId and source_server = '$f_server' and source_database = '$f_database'; ";
 
 	$updateResult = $aws_mysqli->query($queryUpdate) ; // or die ($aws_mysqli->error);
