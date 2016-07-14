@@ -126,7 +126,8 @@ if(!$result) {
 				echo logEvent("Error: $aws_mysqli->error for update: $queryUpdate");
 			} else
 			{
-				echo logEvent("Success: $queryUpdate");
+				echo logEvent("Successful update for $username / id $userId");
+				// echo logEvent("Success: $queryUpdate");
 				$rowsSuccessCounter = $rowsSuccessCounter + 1; 
 			}
 
