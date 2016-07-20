@@ -54,7 +54,11 @@ $nextForumTopicId = getNextForum($maxAWSTopicId);
 if($nextForumTopicId > $maxAWSTopicId) {
 	echo nl2br ("forum has new topic\n\n");
 	$topicDetails = getNextTopicDetails($nextForumTopicId); 
-};
+} else { 
+		echo logEvent("Forum has no newer topics. Exiting.");
+		newLine();
+		exit();
+	}
 
 function getMaxAWS()
 {
@@ -65,26 +69,30 @@ function getMaxAWS()
 		" WHERE forum_id = $forum_id and source_database = '$f_database'" .
 		" HAVING max_topic_id IS NOT NULL" ; 
 	echo nl2br ("AWS max topic query: $query_get_max_aws_topic \n" ) ;
-	$result = $aws_mysqli->query($query_get_max_aws_topic) or die ($aws_mysqli->error);
+	$result = $aws_mysqli->query($query_get_max_aws_topic) ; // or die ($aws_mysqli->error);
 
-	$rowsReturned = $result->num_rows; 
-	echo nl2br ("Rows returned: $rowsReturned \n") ; 
+	if(!$result) { 
+			echo logEvent("Error $aws_mysqli->error to get max topic ID from AWS, exiting. Query: $query_get_max_aws_topic");
+			exit();
+		} else {
+			$rowsReturned = $result->num_rows; 
+			echo nl2br ("Rows returned: $rowsReturned \n") ; 
 
-	if($rowsReturned == 0) {
-		echo logEvent("AWS has no topics, starting from 0");
-		newLine();
-		$topicId = 0;
+			if($rowsReturned == 0) {
+				echo logEvent("AWS has no topics, starting from 0");
+				newLine();
+				$topicId = 0;
+			}
+				else {
+				while($row = $result->fetch_assoc()){
+					$topicId = $row['max_topic_id'];
+					echo logEvent("Max topic_id from AWS: $topicId");
+					newline();
+				}
+			}
+
+			return $topicId;
 	}
-		else {
-		while($row = $result->fetch_assoc()){
-			$topicId = $row['max_topic_id'];
-			echo logEvent("Max topic_id from AWS: $topicId");
-			newline();
-		}
-	}
-
-	return $topicId;
-
 }
 
 function getNextForum($maxTopic)
@@ -100,28 +108,32 @@ function getNextForum($maxTopic)
 		" HAVING max_topic_id IS NOT NULL " ;
 	echo nl2br("Forum query: $query_get_next_topic\n");
 
-	$result = $f_mysqli->query($query_get_next_topic) or die ($f_mysqli->error);
+	$result = $f_mysqli->query($query_get_next_topic) ; // or die ($f_mysqli->error);
 
-	$rowsReturned = $result->num_rows; 
-	echo nl2br ("Rows returned: $rowsReturned \n") ; 
+	if(!$result) { 
+		echo logEvent("Error $f_mysqli->error to get next topic id from forum, exiting. Query: $query_get_next_topic");
+		exit();
+	} else {
+			$rowsReturned = $result->num_rows; 
+			echo nl2br ("Rows returned: $rowsReturned \n") ; 
 
-	if($rowsReturned == 0) {
-		echo logEvent("Forum has no newer topics");
-		newLine();
-	}
-		else {
-			while($row = $result->fetch_assoc()){
-				// echo $row['min_topic_id'];
-				echo logEvent("Next topic_id in forum DB: " . $row['min_topic_id']);
-				$topic_id = $row['min_topic_id'];
-				newLine();
-				echo logEvent("Greatest topic_id in forum DB: " . $row['max_topic_id']);
-				newline();
+			if($rowsReturned == 0) {
+				// log and exit is handled in if logic check, rather than exit here
 			}
-		}
+				else {
+					while($row = $result->fetch_assoc()){
+						// echo $row['min_topic_id'];
+						echo logEvent("Next topic_id in forum DB: " . $row['min_topic_id']);
+						$topic_id = $row['min_topic_id'];
+						newLine();
+						echo logEvent("Greatest topic_id in forum DB: " . $row['max_topic_id']);
+						newline();
+					}
+				}
 
-	return $topic_id;
-}
+			return $topic_id;
+		} // end else
+} // end getNextForum
 
 function getNextTopicDetails($topic_id)
 {	

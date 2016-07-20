@@ -141,7 +141,7 @@ if(!$result) {
 $endTS = microtime(true);
 echo "Ending microtime: $endTS";
 newline();
-$durationTime = $endTS - $startTS;
+$durationTime = round($endTS - $startTS, 2);
 echo logEvent("Duration: $durationTime seconds for $rowsSuccessCounter rows (rows returned from forum: $rowsReturned)");
 newLine();
 
