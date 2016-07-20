@@ -188,9 +188,11 @@ function getNextUserForum($maxUserAWS)
 	$endTS = microtime(true);
 	echo "Ending microtime: $endTS";
 	newline();
-	$durationTime = $endTS - $startTS;
+	$durationTime = round($endTS - $startTS, 2);
 	echo logEvent("Duration: $durationTime seconds for $rowsSuccessCounter rows");
 	newLine();
+	// todo log stathat here for new user metric
+	// todo log stathat here for duration metric
 	return($durationTime);
 
 }
