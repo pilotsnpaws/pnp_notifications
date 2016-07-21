@@ -55,10 +55,8 @@ if (!$aws_mysqli->real_connect($aws_server, $aws_username, $aws_password, $aws_d
   echo logEvent("Failed to connect to AWS MySQL $aws_server/$aws_database: " . mysqli_connect_error());
 	exit("Failed to connect to AWS MySQL $aws_server/$aws_database: " . mysqli_connect_error());
 } else {
-		echo nl2br ("Connected to AWS database: $f_server/$f_database \n" ) ; 
+		echo nl2br ("Connected to AWS database: $aws_server/$aws_database \n" ) ; 
 }
-
-// printf ("System status: %s\n", $aws_mysqli->stat());
 
 $res = $aws_mysqli->query("SHOW STATUS LIKE 'Ssl_cipher';");
 while($row = $res->fetch_array()) {
