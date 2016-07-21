@@ -1,8 +1,8 @@
 <?php
 
 // include forum config file for DB info - dont need these here as they're included in each other file
-// include "settings.php";
-// include ($configPath);
+include "settings.php";
+include ($configPath);
 
 // get DB creds from forum config, AWS creds are in config as well but we don't rename them
 $f_username=$dbuser;
