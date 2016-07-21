@@ -18,6 +18,7 @@ create table pnp_topics
     topic_id 				INT, 
     forum_id 				INT, 
     topic_title 			VARCHAR(255), 
+	  topic_time_ts	TIMESTAMP,
     topic_first_poster_name VARCHAR(255),
     pnp_sendZip 			VARCHAR(5), 
     pnp_recZip 				VARCHAR(5),

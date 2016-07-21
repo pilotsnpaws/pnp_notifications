@@ -123,31 +123,37 @@ function getNextTopicDetails($topic_id)
 	$rowsSuccessCounter = 0;
 
 	// from forum db, get the next higher # topic 
-	$queryFields = " topic_id, forum_id, topic_title, topic_first_poster_name, pnp_sendZip, pnp_recZip " ;
-	$query_get_next_topic = "SELECT $queryFields FROM $tableTopics " .
+	$queryFields = " topic_id, from_unixtime(topic_time) as topic_time_ts, forum_id, topic_title, topic_first_poster_name, pnp_sendZip, pnp_recZip " ;
+	$query_get_next_topic = " SELECT $queryFields FROM $tableTopics " .
 		" WHERE forum_id = $forum_id AND topic_id >= $topic_id " .
-		" ORDER BY topic_id LIMIT 100" ;
+		" ORDER BY topic_id LIMIT 100 ;" ;
 	echo nl2br("Forum details query: $query_get_next_topic\n");
 
-	$result = $f_mysqli->query($query_get_next_topic) or die ($f_mysqli->error);
+	$f_mysqli->query("SET timezone = 'GMT'");
+	$result = $f_mysqli->query($query_get_next_topic) ; //or die ($f_mysqli->error);
 
-	$rowsReturned = $result->num_rows; 
-	echo nl2br ("Rows returned: $rowsReturned \n") ; 
+	if(!$result){
+		echo logEvent("Error $f_mysqli->error getting topic details, exiting. Query: $query_get_next_topic");
+		exit();
+	} else {
+			$rowsReturned = $result->num_rows; 
+			echo nl2br ("Rows returned: $rowsReturned \n") ; 
 
-	while($row = $result->fetch_assoc()){
-		echo logEvent("Next topic_id in forum DB: " . $row['topic_id' ]);
-		newline();
-		$topic_id = $row['topic_id'];
-		$forum_id = $row['forum_id'];
-		$topic_title = $f_mysqli->real_escape_string($row['topic_title']);
-		$topic_first_poster_name = $f_mysqli->real_escape_string($row['topic_first_poster_name']);
-		$pnp_sendZip = $row['pnp_sendZip'];
-		$pnp_recZip = $row['pnp_recZip'];
+			while($row = $result->fetch_assoc()){
+				echo logEvent("Next topic_id in forum DB: " . $row['topic_id' ]);
+				newline();
+				$topic_id = $row['topic_id'];
+				$forum_id = $row['forum_id'];
+				$topic_title = $f_mysqli->real_escape_string($row['topic_title']);
+				$topic_first_poster_name = $f_mysqli->real_escape_string($row['topic_first_poster_name']);
+				$pnp_sendZip = $row['pnp_sendZip'];
+				$pnp_recZip = $row['pnp_recZip'];
+				$topic_time_ts = $row['topic_time_ts'];
 
-		// insert into AWS
-		insertTopic($topic_id, $forum_id, $topic_title, $topic_first_poster_name, $pnp_sendZip, $pnp_recZip);
-		$rowsSuccessCounter = $rowsSuccessCounter + 1; 
-
+				// insert into AWS
+				insertTopic($topic_id, $forum_id, $topic_title, $topic_time_ts, $topic_first_poster_name, $pnp_sendZip, $pnp_recZip);
+				$rowsSuccessCounter = $rowsSuccessCounter + 1; 
+			}
 	}
 
 	$endTS = microtime(true);
@@ -159,7 +165,7 @@ function getNextTopicDetails($topic_id)
 
 }
 
-function insertTopic($topic_id, $forum_id, $topic_title, $topic_first_poster_name, $pnp_sendZip, $pnp_recZip)
+function insertTopic($topic_id, $forum_id, $topic_title, $topic_time_ts, $topic_first_poster_name, $pnp_sendZip, $pnp_recZip)
 {
 	// insert this topic and details into AWS
 	global $forum_id, $aws_mysqli, $tableAWSTopics, $f_server, $f_database, $f_mysqli, $rowsSuccessCounter;
@@ -206,12 +212,12 @@ function insertTopic($topic_id, $forum_id, $topic_title, $topic_first_poster_nam
 
 // now insert into the AWS topics table
 	$insertFields = " topic_id, forum_id, topic_title, topic_first_poster_name, pnp_sendZip, pnp_recZip, " .
-		" send_lat, send_lon, send_location_point, rec_lat, rec_lon, rec_location_point, topic_linestring, source_server, source_database " ;
+		" send_lat, send_lon, send_location_point, rec_lat, rec_lon, rec_location_point, topic_linestring, source_server, source_database, topic_time_ts " ;
 	$lineStringColumnValue = "LINESTRING($sendLon $sendLat, $recLon $recLat)";
 	$insertQuery = "INSERT INTO $tableAWSTopics ($insertFields) VALUES ( '$topic_id', '$forum_id', '$topic_title', '$topic_first_poster_name', " .
 		" '$pnp_sendZip', '$pnp_recZip', '$sendLat', '$sendLon', ST_GeomFromText('POINT($sendLon $sendLat)') , " . 
 		" '$recLat', '$recLon', ST_GeomFromText('POINT($recLon $recLat)'), " .
-		" ST_GeomFromText('$lineStringColumnValue'), '$f_server', '$f_database')"; 
+		" ST_GeomFromText('$lineStringColumnValue'), '$f_server', '$f_database', $topic_time_ts)"; 
 
 	// echo nl2br ("Insert to AWS: $insertQuery");
 	// newLine();
