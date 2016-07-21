@@ -46,24 +46,35 @@ where t.topic_id = $topicId " .
 	" and t.source_server = '$f_server' and t.source_database = '$f_database' ;";
 
 $result = $aws_mysqli->query($queryGetTopicDetails);
-$rowsReturned = $result->num_rows; 
-if($rowsReturned == 0) {
-  echo logEvent("Topic details query returned no rows, query: $queryGetTopicDetails");
-	exit();
+
+if(!$result) {
+		echo logEvent("Error $aws_mysqli->error to get topic details AWS, exiting. Query: $queryGetTopicDetails");
+		exit();
+	} else {
+		$rowsReturned = $result->num_rows; 
+		if($rowsReturned == 0) {
+			echo logEvent("Topic details query returned no rows, query: $queryGetTopicDetails");
+			exit();
+		}
+			elseif($rowsReturned == 1) {
+				while($row = $result->fetch_assoc()){
+					$topicId          = $row['topic_id'];
+					$topicTitle       = $row['topic_title'];
+					$sendZip          = $row['pnp_sendZip'];
+					$recZip           = $row['pnp_recZip'];
+					$topicDistance    = $row['trip_dist'];
+				}
+			}
+			else { 
+				echo logEvent("Topic details query returned > 1 row. Something is wrong. Query: $queryGetTopicDetails");
+				exit(); // dont do anything else in this case. gotta fix. 
+		}
+	if($topicDistance > 1000) {
+		echo logEvent("Error. Topic $topicId $topicFromToText is $topicDistance. No emails sent for trips over 1000 miles. Exiting.");
+	}
+		
 }
-  elseif($rowsReturned == 1) {
-    while($row = $result->fetch_assoc()){
-      $topicId          = $row['topic_id'];
-      $topicTitle       = $row['topic_title'];
-      $sendZip          = $row['pnp_sendZip'];
-      $recZip           = $row['pnp_recZip'];
-      $topicDistance    = $row['trip_dist'];
-    }
-  }
-  else { 
-    echo logEvent("Topic details query returned > 1 row. Something is wrong. Query: $queryGetTopicDetails");
-		exit(); // dont do anything else in this case. gotta fix. 
-}
+
  
 
 // magic is called from here

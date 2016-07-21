@@ -33,21 +33,23 @@ if($maxUserForum > $maxUserAWS) {
 function getMaxUserForum()
 {
 	global $table_users, $f_database, $f_mysqli;
-	$queryMaxUserForum = "SELECT max(user_id)as max_user_id from $table_users";
+	$queryMaxUserForum = "SELECT max(user_id)as max_user_id from $table_users;" ;
 	echo $queryMaxUserForum;
 	newLine();
-	$result = $f_mysqli->query($queryMaxUserForum) or die ($f_mysqli->error);
+	$result = $f_mysqli->query($queryMaxUserForum) ; //or die ($f_mysqli->error);
 
-	while($row = $result->fetch_assoc()){ 
-		$user_id = $row['max_user_id'];
-		echo logEvent("Max user_id from forum: $user_id");
-		newLine();
+	if(!$result) {
+		echo logEvent("Error $f_mysqli->error to get max user id from forum, exiting. Query: $queryMaxUserForum");
+	} else {
+		while($row = $result->fetch_assoc()){ 
+			$user_id = $row['max_user_id'];
+			echo logEvent("Max user_id from forum: $user_id");
+			newLine();
+		}
+			return $user_id;		
 	}
-		return $user_id;
-}
+} // end getMaxUserForum
 
-
-// TODO: Get highest user ID in AWS
 function getMaxUserAWS()
 {
 	global $table_aws_users, $f_database, $aws_mysqli;
