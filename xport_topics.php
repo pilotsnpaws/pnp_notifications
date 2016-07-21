@@ -217,7 +217,7 @@ function insertTopic($topic_id, $forum_id, $topic_title, $topic_time_ts, $topic_
 	$insertQuery = "INSERT INTO $tableAWSTopics ($insertFields) VALUES ( '$topic_id', '$forum_id', '$topic_title', '$topic_first_poster_name', " .
 		" '$pnp_sendZip', '$pnp_recZip', '$sendLat', '$sendLon', ST_GeomFromText('POINT($sendLon $sendLat)') , " . 
 		" '$recLat', '$recLon', ST_GeomFromText('POINT($recLon $recLat)'), " .
-		" ST_GeomFromText('$lineStringColumnValue'), '$f_server', '$f_database', $topic_time_ts)"; 
+		" ST_GeomFromText('$lineStringColumnValue'), '$f_server', '$f_database', '$topic_time_ts')"; 
 
 	// echo nl2br ("Insert to AWS: $insertQuery");
 	// newLine();
