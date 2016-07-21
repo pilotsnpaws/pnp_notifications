@@ -13,6 +13,7 @@ include ($configPath);
 include "xport_functions.php";
 require 'vendor/autoload.php';
 include "email_trip_notif_template.php";
+include "pnp_db.php";
 
 echo "Environment: $environment"; 
 newline();
@@ -22,13 +23,6 @@ newline();
 
 // define the prefix of each log message
 $logType = '[send notif]'; 
-
-// get DB creds from forum config, AWS creds are in config as well but we don't rename them
-// TODO we might not need to hit the phpbb DB, just AWS, clean up if so
-$f_username=$dbuser;
-$f_password=$dbpasswd;
-$f_database=$dbname;
-$f_server=$dbhost;
 
 // define tables, we could use phpbb's constants.php but unsure how that will work with upgrade
 // TODO might want to make these actually constants instead of vars
@@ -42,28 +36,6 @@ define("topicUrlPrefix","http://pilotsnpaws.org/forum/viewtopic.php?t=");
 define("mapUrlPrefix","http://www.pilotsnpaws.org/maps/maps_single_trip.php?topic="); //add topicId to end of this to show map
 define("forumUcpUrl","http://www.pilotsnpaws.org/forum/ucp.php?i=164");
 define("forumTechUrl","http://www.pilotsnpaws.org/forum/viewforum.php?f=17");
-
-
-// define forum mysqli connection
-$f_mysqli = new mysqli($f_server, $f_username, $f_password, $f_database);
-echo nl2br ("Forum database: $f_server/$f_database \n" ) ; 
- // Check forum connection
-if (mysqli_connect_errno($f_mysqli))
-  {
-		echo logEvent("Failed to connect to forum MySQL: " . mysqli_connect_error());
-		exit();
-  } else { } ;
-
-// define AWS mysqli connection
-$aws_mysqli = new mysqli($aws_server, $aws_username, $aws_password, $aws_database);
-echo nl2br ("AWS database: $aws_server/$aws_database \n\n" ) ; 
-// Check AWS connection
-if (mysqli_connect_errno($aws_mysqli))
-	{
-		echo logEvent("Failed to connect to AWS MySQL: " . mysqli_connect_error());
-		exit();
-	} else { } ;
-
 
 $topicId = getNextTopic();
 
@@ -112,7 +84,7 @@ function getNextTopic() {
 		" and (n.notify_status is null OR n.notify_status = 0) " .
 		" HAVING min_topic_id IS NOT NULL; " ;
 	
-	$nextTopicResults = $aws_mysqli->query($nextTopicQuery) or die ($aws_mysqli->error);;
+	$nextTopicResults = $aws_mysqli->query($nextTopicQuery) or die ($aws_mysqli->error);
 	
 	$rowsReturned = $nextTopicResults->num_rows; 
 	

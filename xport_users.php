@@ -6,6 +6,7 @@
 include "settings.php";
 include ($configPath);
 include "xport_functions.php";
+include "pnp_db.php";
 
 echo "Environment: $environment"; 
 newline();
@@ -13,46 +14,11 @@ newline();
 // define the prefix of each log message
 $logType = '[user xport]'; 
 
-// get DB creds from forum config, AWS creds are in config as well but we don't rename them
-$f_username=$dbuser;
-$f_password=$dbpasswd;
-$f_database=$dbname;
-$f_server=$dbhost;
-
 // define tables, we could use phpbb's constants.php but unsure how that will work with upgrade
 $table_users = 'phpbb_users'; 
 $table_users_details = 'vw_volunteers';  // view with location data
 $table_aws_users = 'pnp_users' ; // table in AWS that holds replicated topic data, but only columns we need
 $table_notif = 'pnp_trip_notif_status' ; // table that knows if we sent a notif to a user for a topic yet
-
-
-// define forum mysqli connection
-$f_mysqli = new mysqli($f_server, $f_username, $f_password, $f_database);
-
-echo nl2br ("Forum database: $f_server/$f_database \n" ) ; 
-
- // Check forum connection
-if (mysqli_connect_errno($f_mysqli))
-  {
-  	echo logEvent("Failed to connect to forum MySQL: " . mysqli_connect_error());
-		exit();
-  } else { } ;
-
-// define AWS mysqli connection
-$aws_mysqli = new mysqli($aws_server, $aws_username, $aws_password, $aws_database);
-
-echo nl2br ("AWS database: $aws_server/$aws_database \n\n" ) ; 
-
- // Check AWS connection
-if (mysqli_connect_errno($aws_mysqli))
-  {
-  	echo logEvent("Failed to connect to AWS MySQL: " . mysqli_connect_error());
-		exit();
-  } else { } ;
-
-
-// TODO: Get list of users from forum that have recent activity
-// TODO: 
 
 $maxUserForum = getMaxUserForum();
 $maxUserAWS = getMaxUserAWS();

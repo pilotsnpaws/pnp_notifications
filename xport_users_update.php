@@ -7,6 +7,7 @@
 include "settings.php";
 include ($configPath);
 include "xport_functions.php";
+include "pnp_db.php";
 
 echo "Environment: $environment"; 
 newline();
@@ -14,51 +15,11 @@ newline();
 // define the prefix of each log message
 $logType = '[user update]'; 
 
-// get DB creds from forum config
-$f_username=$dbuser;
-$f_password=$dbpasswd;
-$f_database=$dbname;
-$f_server=$dbhost;
-
-// hardcode creds for AWS DB
-// TODO: move these to config file
-// $aws_username
-// $aws_password 
-// $aws_database
-// $aws_server
-
-
 // define tables, we could use phpbb's constants.php but unsure how that will work with upgrade
 $table_users = 'phpbb_users'; 
 $table_users_details = 'vw_volunteers';  // view with location data
 $table_aws_users = 'pnp_users' ; // table in AWS that holds replicated topic data, but only columns we need
 $table_notif = 'pnp_trip_notif_status' ; // table that knows if we sent a notif to a user for a topic yet
-
-
-// define forum mysqli connection
-$f_mysqli = new mysqli($f_server, $f_username, $f_password, $f_database);
-
-echo nl2br ("Forum database: $f_server/$f_database \n" ) ; 
-
- // Check forum connection
-if (mysqli_connect_errno($f_mysqli))
-  {
-		echo logEvent("Failed to connect to forum MySQL: " . mysqli_connect_error());
-		exit();
-  } else { } ;
-
-// define AWS mysqli connection
-$aws_mysqli = new mysqli($aws_server, $aws_username, $aws_password, $aws_database);
-
-echo nl2br ("AWS database: $aws_server/$aws_database \n\n" ) ; 
-
- // Check AWS connection
-if (mysqli_connect_errno($aws_mysqli))
-  {
-		echo logEvent("Failed to connect to AWS MySQL: " . mysqli_connect_error());
-		exit();
-  } else { } ;
-
 
 // Get list of users from forum that have recent activity
 // Run sql update on AWS with latest info
@@ -75,7 +36,7 @@ $queryRecentActiveUsersForum = "SELECT last_visit, user_id, user_email, user_reg
 	" city, state, CURRENT_TIMESTAMP, user_inactive_reason " . 
 		" FROM $table_users_details " .
 		" WHERE last_visit > date_add(CURRENT_TIMESTAMP, INTERVAL -3 HOUR)" .
-		" ORDER BY user_id LIMIT 500 "; // increase once we know it won't blow up
+		" ORDER BY user_id LIMIT 2000 "; // increase once we know it won't blow up
 echo "queryRecentActiveUsersForum: $queryRecentActiveUsersForum" ;
 newLine();
 $result = $f_mysqli->query($queryRecentActiveUsersForum); //  or die ($f_mysqli->error);
