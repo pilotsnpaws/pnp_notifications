@@ -70,7 +70,7 @@ if(!$result) {
 				exit(); // dont do anything else in this case. gotta fix. 
 		}
 	if($topicDistance > 1000) {
-		echo logEvent("Error. Topic $topicId $topicFromToText is $topicDistance miles. No emails sent for trips over 1000 miles. Exiting.");
+		echo logEvent("Error. Topic $topicId is $topicDistance miles. No emails sent for trips over 1000 miles. Exiting.");
 		newLine();
 		exit();
 	}
