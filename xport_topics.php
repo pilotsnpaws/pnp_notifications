@@ -129,7 +129,7 @@ function getNextTopicDetails($topic_id)
 		" ORDER BY topic_id LIMIT 100 ;" ;
 	echo nl2br("Forum details query: $query_get_next_topic\n");
 
-	$f_mysqli->query("SET timezone = 'GMT'");
+	$f_mysqli->query("SET time_zone = 'GMT';") or die ($f_mysqli->error); // TODO add error handling log here
 	$result = $f_mysqli->query($query_get_next_topic) ; //or die ($f_mysqli->error);
 
 	if(!$result){
