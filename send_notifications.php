@@ -66,11 +66,11 @@ if(!$result) {
 				}
 			}
 			else { 
-				echo logEvent("Topic details query returned > 1 row. Something is wrong. Query: $queryGetTopicDetails");
+				echo logEvent("Error. Topic details query returned > 1 row. Something is wrong. Query: $queryGetTopicDetails");
 				exit(); // dont do anything else in this case. gotta fix. 
 		}
 	if($topicDistance > 1000) {
-		echo logEvent("Error. Topic $topicId is $topicDistance miles. No emails sent for trips over 1000 miles. Exiting.");
+		echo logEvent("Warning. Topic $topicId is $topicDistance miles. No emails sent for trips over 1000 miles. Exiting.");
 		newLine();
 		exit();
 	}
