@@ -32,10 +32,10 @@ $tableNotif = 'pnp_trip_notif_status' ; // table that knows if we sent a notif t
 $forum_id = '5' ; // we only care about the trip request forum
 
 // email contents constants (say that five times fast)
-define("topicUrlPrefix","http://pilotsnpaws.org/forum/viewtopic.php?t=");
-define("mapUrlPrefix","http://www.pilotsnpaws.org/maps/maps_single_trip.php?topic="); //add topicId to end of this to show map
-define("forumUcpUrl","http://www.pilotsnpaws.org/forum/ucp.php?i=164");
-define("forumTechUrl","http://www.pilotsnpaws.org/forum/viewforum.php?f=17");
+define("topicUrlPrefix","https://pilotsnpaws.org/forum/viewtopic.php?t=");
+define("mapUrlPrefix","https://pilotsnpaws.org/maps/maps_single_trip.php?topic="); //add topicId to end of this to show map
+define("forumUcpUrl","https://pilotsnpaws.org/forum/ucp.php?i=164");
+define("forumTechUrl","https://pilotsnpaws.org/forum/viewforum.php?f=17");
 
 $topicId = getNextTopic();
 

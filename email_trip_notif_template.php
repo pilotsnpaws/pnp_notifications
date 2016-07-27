@@ -186,7 +186,7 @@ $emailBody =
 
                 <img class="right" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;
                 clear: both;display: block;border: 0;height: auto;line-height: 100%;width: 66px;max-width: 66px" align="right" border="0" 
-                src="http://www.pilotsnpaws.org/notif/images/pnplogo1.png" alt="Pilots N Paws Logo" width="66">
+                src="https://pilotsnpaws.org/notif/images/pnplogo1.png" alt="Pilots N Paws Logo" width="66">
             </div>
         </td>
     </tr>
@@ -304,7 +304,7 @@ $emailBody =
             <br>
             <br>
               <b>
-                If you have any issues, questions or suggestions about this new trip email format - please post a reply on <a href="http://www.pilotsnpaws.org/forum/viewtopic.php?f=17&t=41713">this topic</a> in the forum.
+                If you have any issues, questions or suggestions about this new trip email format - please post a reply on <a href="https://pilotsnpaws.org/forum/viewtopic.php?f=17&t=41713">this topic</a> in the forum.
               </b>
             </p>
           </div>
@@ -381,7 +381,7 @@ $emailBody =
                       <tbody><tr style="vertical-align: top">
                           <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" width="42" align="left" valign="middle">
                             <a href="https://www.facebook.com/pilotsnpawsfanpage" title="Facebook" target="_blank">
-                                <img style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: none;height: auto;line-height: 100%;max-width: 32px !important" src="http://www.pilotsnpaws.org/notif/images/facebook.png" alt="Facebook" title="Facebook" width="32">
+                                <img style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: none;height: auto;line-height: 100%;max-width: 32px !important" src="https://pilotsnpaws.org/notif/images/facebook.png" alt="Facebook" title="Facebook" width="32">
                             </a>
                           </td>
                       </tr>
@@ -390,7 +390,7 @@ $emailBody =
                       <tbody><tr style="vertical-align: top">
                           <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" width="42" align="left" valign="middle">
                             <a href="https://twitter.com/PilotsNPaws" title="Twitter" target="_blank">
-                                <img style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: none;height: auto;line-height: 100%;max-width: 32px !important" src="http://www.pilotsnpaws.org/notif/images/twitter.png" alt="Twitter" title="Twitter" width="32">
+                                <img style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: none;height: auto;line-height: 100%;max-width: 32px !important" src="https://pilotsnpaws.org/notif/images/twitter.png" alt="Twitter" title="Twitter" width="32">
                             </a>
                           </td>
                       </tr>
@@ -399,7 +399,7 @@ $emailBody =
                       <tbody><tr style="vertical-align: top">
                           <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" width="42" align="left" valign="middle">
                             <a href="https://www.instagram.com/pilotsnpaws/" title="Instagram" target="_blank">
-                                <img style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: none;height: auto;line-height: 100%;max-width: 32px !important" src="http://www.pilotsnpaws.org/notif/images/instagram.png" alt="Instagram" title="Instagram" width="32">
+                                <img style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: none;height: auto;line-height: 100%;max-width: 32px !important" src="https://pilotsnpaws.org/notif/images/instagram.png" alt="Instagram" title="Instagram" width="32">
                             </a>
                           </td>
                       </tr>
@@ -408,7 +408,7 @@ $emailBody =
                       <tbody><tr style="vertical-align: top">
                           <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" width="42" align="left" valign="middle">
                             <a href="https://www.youtube.com/user/PilotsNPaws" title="YouTube" target="_blank">
-                                <img style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: none;height: auto;line-height: 100%;max-width: 32px !important" src="http://www.pilotsnpaws.org/notif/images/youtube.png" alt="YouTube" title="YouTube" width="32">
+                                <img style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: none;height: auto;line-height: 100%;max-width: 32px !important" src="https://pilotsnpaws.org/notif/images/youtube.png" alt="YouTube" title="YouTube" width="32">
                             </a>
                           </td>
                       </tr>
