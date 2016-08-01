@@ -35,7 +35,7 @@ $queryOutdatedAWSUsers = "select GROUP_CONCAT(user_id) as str_user_ids " .
 	" and source_server = '$f_server' and source_database = '$f_database' " .
 	" order by updated_ts; ";
 
-echo $queryOutdatedAWSUsers;
+echo $queryOutdatedAWSUsers; 
 newLine();
 
 $outdatedResult = $aws_mysqli->query($queryOutdatedAWSUsers); 
@@ -46,6 +46,9 @@ if(!$outdatedResult) {
 } else {
 	while($row = $outdatedResult->fetch_assoc()){
 		$outdatedUserIds = $row['str_user_ids'];
+		if(empty($outdatedUserIds)) {
+			$outdatedUserIds = '0'; // set to a 0 to not break the sql below in case we dont return anything from db
+		}
 		echo("Oldest users in AWS to update: $outdatedUserIds");
 		newLine();
 	}
