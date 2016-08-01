@@ -29,13 +29,32 @@ $startTS = microtime(true);
 echo "Start microtime: $startTS";
 newline();
 
-$rowsSuccessCounter = 0;
+$queryOutdatedAWSUsers = "select GROUP_CONCAT(user_id) as str_user_ids " .
+	" from $table_aws_users " . 
+	" where updated_ts < date_add(CURRENT_TIMESTAMP, INTERVAL -1 DAY) " . 
+	" order by updated_ts; ";
 
+$outdatedResult = $aws_mysqli->query($queryOutdatedAWSUsers); 
+
+if(!$outdatedResult) {
+	echo logEvent("Error: $f_mysqli->error for query: $queryRecentActiveUsersForum , exiting.");
+	exit();
+} else {
+	while($row = $outdatedResult->fetch_assoc()){
+		$outdatedUserIds = $row['str_user_ids'];
+		echo("Oldest users in AWS to update: $outdatedUserIds");
+		newLine();
+	}
+}
+
+
+$rowsSuccessCounter = 0;
 $queryRecentActiveUsersForum = "SELECT last_visit, user_id, user_email, user_regdate, username, pf_flying_radius, " .
 	" pf_foster_yn, pf_pilot_yn, apt_id, apt_name, zip, COALESCE(lat,0) as lat , COALESCE(lon,0) as lon, " .
 	" city, state, CURRENT_TIMESTAMP, user_inactive_reason " . 
 		" FROM $table_users_details " .
 		" WHERE last_visit > date_add(CURRENT_TIMESTAMP, INTERVAL -3 HOUR)" .
+		" OR user_id IN ($outdatedUserIds) " .
 		" ORDER BY user_id LIMIT 2000 "; // increase once we know it won't blow up
 echo "queryRecentActiveUsersForum: $queryRecentActiveUsersForum" ;
 newLine();
