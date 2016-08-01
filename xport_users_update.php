@@ -34,10 +34,13 @@ $queryOutdatedAWSUsers = "select GROUP_CONCAT(user_id) as str_user_ids " .
 	" where updated_ts < date_add(CURRENT_TIMESTAMP, INTERVAL -1 DAY) " . 
 	" order by updated_ts; ";
 
+echo $queryOutdatedAWSUsers;
+newLine();
+
 $outdatedResult = $aws_mysqli->query($queryOutdatedAWSUsers); 
 
 if(!$outdatedResult) {
-	echo logEvent("Error: $f_mysqli->error for query: $queryRecentActiveUsersForum , exiting.");
+	echo logEvent("Error: $f_mysqli->error for query: $queryOutdatedAWSUsers , exiting.");
 	exit();
 } else {
 	while($row = $outdatedResult->fetch_assoc()){
@@ -69,49 +72,49 @@ if(!$result) {
 		echo nl2br ("Rows returned: $rowsReturned \n") ; 
 	
 		while($row = $result->fetch_assoc()){ 
-		$userId = $row['user_id'];
-		$lastVisit = $row['last_visit'];
-		$userEmail = $f_mysqli->real_escape_string($row['user_email']);
-		$userRegdate = $row['user_regdate'];
-		$username = $f_mysqli->real_escape_string($row['username']);
-		$userInactiveReason = $row['user_inactive_reason'];
-		$flyingRadius = $row['pf_flying_radius'];
-		$foster = $row['pf_foster_yn'];
-		$pilot = $row['pf_pilot_yn'];
-		$aptId = $row['apt_id'];
-		$aptName = $f_mysqli->real_escape_string($row['apt_name']);
-		$zip = $row['zip'];
-		$lat = $row['lat'];
-		$lon = $row['lon'];
-		$city = $f_mysqli->real_escape_string($row['city']);
-		$state = $row['state'];
-		$currentTimestamp = $row['CURRENT_TIMESTAMP'];
-		echo logEvent("Next user_id from forum: $userId");
-		newLine();
+			$userId = $row['user_id'];
+			$lastVisit = $row['last_visit'];
+			$userEmail = $f_mysqli->real_escape_string($row['user_email']);
+			$userRegdate = $row['user_regdate'];
+			$username = $f_mysqli->real_escape_string($row['username']);
+			$userInactiveReason = $row['user_inactive_reason'];
+			$flyingRadius = $row['pf_flying_radius'];
+			$foster = $row['pf_foster_yn'];
+			$pilot = $row['pf_pilot_yn'];
+			$aptId = $row['apt_id'];
+			$aptName = $f_mysqli->real_escape_string($row['apt_name']);
+			$zip = $row['zip'];
+			$lat = $row['lat'];
+			$lon = $row['lon'];
+			$city = $f_mysqli->real_escape_string($row['city']);
+			$state = $row['state'];
+			$currentTimestamp = $row['CURRENT_TIMESTAMP'];
+			echo logEvent("Next user_id from forum: $userId");
+			newLine();
 
-		// update user in AWS 
+			// update user in AWS 
 
-		$queryUpdate = " UPDATE $table_aws_users " .
-			" SET last_visit = '$lastVisit', user_email = '$userEmail', user_regdate = '$userRegdate', " . 
-			" username = '$username', pf_flying_radius = '$flyingRadius', " . 
-			" pf_foster_yn = '$foster', pf_pilot_yn = '$pilot', apt_id = '$aptId', apt_name = '$aptName'," . 
-			" zip = '$zip', lat = '$lat', lon = '$lon', " .
-			" location_point = ST_GeomFromText('POINT($lon $lat)'), city = '$city', state = '$state', " . 
-			" updated_source_ts = '$currentTimestamp' , user_inactive_reason = $userInactiveReason " .
-			" WHERE user_id = $userId and source_server = '$f_server' and source_database = '$f_database'; ";
+			$queryUpdate = " UPDATE $table_aws_users " .
+				" SET last_visit = '$lastVisit', user_email = '$userEmail', user_regdate = '$userRegdate', " . 
+				" username = '$username', pf_flying_radius = '$flyingRadius', " . 
+				" pf_foster_yn = '$foster', pf_pilot_yn = '$pilot', apt_id = '$aptId', apt_name = '$aptName'," . 
+				" zip = '$zip', lat = '$lat', lon = '$lon', " .
+				" location_point = ST_GeomFromText('POINT($lon $lat)'), city = '$city', state = '$state', " . 
+				" updated_source_ts = '$currentTimestamp' , user_inactive_reason = $userInactiveReason " .
+				" WHERE user_id = $userId and source_server = '$f_server' and source_database = '$f_database'; ";
 
-		$updateResult = $aws_mysqli->query($queryUpdate) ; // or die ($aws_mysqli->error);
+			$updateResult = $aws_mysqli->query($queryUpdate) ; // or die ($aws_mysqli->error);
 
-		if(!$updateResult) {
-				echo logEvent("Error: $aws_mysqli->error for update: $queryUpdate");
-			} else
-			{
-				echo logEvent("Successful update for $username / id $userId");
-				// echo logEvent("Success: $queryUpdate");
-				$rowsSuccessCounter = $rowsSuccessCounter + 1; 
-			}
+			if(!$updateResult) {
+					echo logEvent("Error: $aws_mysqli->error for update: $queryUpdate");
+				} else
+				{
+					echo logEvent("Successful update for $username / id $userId");
+					// echo logEvent("Success: $queryUpdate");
+					$rowsSuccessCounter = $rowsSuccessCounter + 1; 
+				}
 
-		newLine();
+			newLine();
 
 	} // end while
 }
