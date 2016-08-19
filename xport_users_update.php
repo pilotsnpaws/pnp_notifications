@@ -49,6 +49,8 @@ if(!$outdatedResult) {
 		if(empty($outdatedUserIds)) {
 			$outdatedUserIds = '0'; // set to a 0 to not break the sql below in case we dont return anything from db
 		}
+		// fixing https://github.com/mikegreen/pnp_notifications/issues/7
+		$outdatedUserIds = rtrim($outdatedUserIds, ",");
 		echo("Oldest users in AWS to update: $outdatedUserIds");
 		newLine();
 	}
