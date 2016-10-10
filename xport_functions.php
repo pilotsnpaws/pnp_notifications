@@ -1,5 +1,24 @@
 <?php
 
+include "stathat.php";
+
+function logStathat($stathatAccount, $statName, $statValue, $statType, $environment) {
+	$statName = 'pnp.' . $environment . '.' . $statName ; 
+	// echo("Account $stathatAccount Name $statName Type $statType");
+	newline();
+	if ($statType == 'value') {
+		echo("Log value to stathat");
+		stathat_ez_value($stathatAccount, $statName, $statValue);
+	}
+	elseif ($statType == 'count') {
+		echo("Log count to stathat");
+		stathat_ez_count($stathatAccount, $statName, $statValue);
+	}
+	else {
+		echo logEvent('Error. Invalid stathat statType. Must be value or count.');
+	}
+}
+
 function newline() {
 	echo nl2br ("\n");
 };

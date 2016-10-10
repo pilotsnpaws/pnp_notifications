@@ -69,11 +69,16 @@ if(!$result) {
 				echo logEvent("Error. Topic details query returned > 1 row. Something is wrong. Query: $queryGetTopicDetails");
 				exit(); // dont do anything else in this case. gotta fix. 
 		}
+	
 	if($topicDistance > 1000) {
 		echo logEvent("Warning. Topic $topicId is $topicDistance miles. No emails sent for trips over 1000 miles. Exiting.");
 		newLine();
 		exit();
 	}
+	
+	// echo ("run stathat");
+	// function logStathat($stathatAccount, $statName, $statValue, $statType, $environment) 
+	logStathat($stathatAccount, 'tripDistance', $topicDistance, 'value', $environment);
 		
 }
 
