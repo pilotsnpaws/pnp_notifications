@@ -7,5 +7,6 @@ $sgApiKey = 'x';
 $sendMailFlag = true; // send mail for real?
 $notificationEmailSendGridCategory = 'local test'; // category for sendgrid tracking
 $sendHoursBack = '60'; // this is how many hours back the send notification will pull topics. it is a safe guard in case the logsend fails
+$stathatAccount = 'ezkeyhere' ; // stathat ez key, see https://www.stathat.com/manual/start
 
 ?>
