@@ -134,6 +134,9 @@ $durationTime = round($endTS - $startTS, 2);
 echo logEvent("Duration: $durationTime seconds for $rowsSuccessCounter rows (rows returned from forum: $rowsReturned)");
 newLine();
 
+// function logStathat($stathatAccount, $statName, $statValue, $statType, $environment) 
+logStathat($stathatAccount, 'notifUsersUpdated', $rowsSuccessCounter, 'value', $environment);
+
 // close connections
 $f_mysqli->close();
 $aws_mysqli->close();

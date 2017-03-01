@@ -159,8 +159,10 @@ function getNextUserForum($maxUserAWS)
 	$durationTime = round($endTS - $startTS, 2);
 	echo logEvent("Duration: $durationTime seconds for $rowsSuccessCounter rows");
 	newLine();
-	// todo log stathat here for new user metric
-	// todo log stathat here for duration metric
+
+	// function logStathat($stathatAccount, $statName, $statValue, $statType, $environment) 
+	logStathat($stathatAccount, 'notifUsersAdded', $rowsSuccessCounter, 'value', $environment);
+	
 	return($durationTime);
 
 }

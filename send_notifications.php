@@ -273,7 +273,9 @@ function buildEmails($topicId, $topicFromToText) {
 	echo logEvent("Users returned: $rowsReturned, Emails sent: $emailSentCounter Duration: $durationTime seconds");
 	newLine(); 
 	// todo - add check here to make sure it matches
-
+	
+	// function logStathat($stathatAccount, $statName, $statValue, $statType, $environment) 
+	logStathat($stathatAccount, 'notifEmailsSent', $emailSentCounter, 'value', $environment);
 	
 } // end buildEmails function
 
