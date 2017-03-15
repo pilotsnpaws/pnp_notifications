@@ -162,6 +162,7 @@ function getNextUserForum($maxUserAWS)
 
 	// function logStathat($stathatAccount, $statName, $statValue, $statType, $environment) 
 	logStathat2('notifUsersAdded', $rowsSuccessCounter, 'value');
+	newLine();
 	
 	return($durationTime);
 
