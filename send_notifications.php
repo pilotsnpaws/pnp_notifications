@@ -300,7 +300,7 @@ function sendMail($mail) {
 	newline();
 
 	$endTS = microtime(true);
-	$durationTime = $endTS - $startTS;
+	$durationTime = round($endTS - $startTS , 3);
 	echo logEvent("Duration: $durationTime seconds for sendMail");
 	newLine();
 	
