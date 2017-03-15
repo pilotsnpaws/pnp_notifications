@@ -1,6 +1,7 @@
 <?php
 
 include "stathat.php";
+include "settings.php";
 
 function logStathat($stathatAccount, $statName, $statValue, $statType, $environment) {
 	$statName = 'pnp.' . $environment . '.' . $statName ; 
@@ -18,6 +19,25 @@ function logStathat($stathatAccount, $statName, $statValue, $statType, $environm
 		echo logEvent('Error. Invalid stathat statType. Must be value or count.');
 	}
 }
+
+function logStathat2($statName, $statValue, $statType) {
+	global $environment, $stathatAccount;
+	$statName = 'pnp.' . $environment . '.' . $statName ; 
+	// echo("Account $stathatAccount Name $statName Type $statType");
+	newline();
+	if ($statType == 'value') {
+		stathat_ez_value($stathatAccount, $statName, $statValue);
+		echo("Logged value: $statValue to stathat: $statName");
+	}
+	elseif ($statType == 'count') {
+		stathat_ez_count($stathatAccount, $statName, $statValue);
+		echo("Logged count: $statValue to stathat: $statName");
+	}
+	else {
+		echo logEvent('Error. Invalid stathat statType. Must be value or count.');
+	}
+}
+
 
 function newline() {
 	echo nl2br ("\n");

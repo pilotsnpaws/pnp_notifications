@@ -102,7 +102,7 @@ function getNextUserForum($maxUserAWS)
  		" FROM $table_users_details " .
  		" WHERE user_id > $maxUserAWS " .
 		" 	and user_inactive_reason = 0 /* include active only, exclude deactivated users */ " .
- 		" ORDER BY user_id LIMIT 1000 "; // increase once we know it won't blow up
+ 		" ORDER BY user_id LIMIT 100 "; // increase once we know it won't blow up
 	echo "getNextUserForum: $queryNextUserForum" ;
 	newLine();
 	$result = $f_mysqli->query($queryNextUserForum) or die ($f_mysqli->error);
@@ -161,7 +161,7 @@ function getNextUserForum($maxUserAWS)
 	newLine();
 
 	// function logStathat($stathatAccount, $statName, $statValue, $statType, $environment) 
-	logStathat($stathatAccount, 'notifUsersAdded', $rowsSuccessCounter, 'value', $environment);
+	logStathat2('notifUsersAdded', $rowsSuccessCounter, 'value');
 	
 	return($durationTime);
 

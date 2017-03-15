@@ -76,9 +76,10 @@ if(!$result) {
 		exit();
 	}
 	
-	// echo ("run stathat");
+	// log trip distance to stathat
 	// function logStathat($stathatAccount, $statName, $statValue, $statType, $environment) 
-	logStathat($stathatAccount, 'tripDistance', $topicDistance, 'value', $environment);
+	logStathat2('tripDistance', $topicDistance, 'value');
+	newLine();
 		
 }
 
@@ -275,7 +276,8 @@ function buildEmails($topicId, $topicFromToText) {
 	// todo - add check here to make sure it matches
 	
 	// function logStathat($stathatAccount, $statName, $statValue, $statType, $environment) 
-	logStathat($stathatAccount, 'notifEmailsSent', $emailSentCounter, 'value', $environment);
+	logStathat2('notifEmailsSent', $emailSentCounter, 'value');
+	newLine();
 	
 } // end buildEmails function
 
@@ -290,11 +292,11 @@ function sendMail($mail) {
 	
 	$httpStatusCode = $response->statusCode();
 	
-	echo $response->statusCode();
+	echo "Status code: " . $response->statusCode();
 	newline();
-	echo $response->headers();
+	echo "Headers: " . $response->headers();
 	newline();
-	echo $response->body();
+	echo "Body: " . $response->body();
 	newline();
 
 	$endTS = microtime(true);
@@ -314,6 +316,9 @@ function logSend($topicId, $userId, $statusCode, $serverName, $databaseName) {
 			$notifyStatus = '1';
 		} else {
 			$notifyStatus = '2';	
+			echo logEvent("Error. SendGrid status code returned was not 202. We didn't send emails!");
+		  logStathat2('notifEmailError', 1, 'value');
+			newLine();
 		}
 	echo ("Sendgrid result for topic $topicId for user $userId was $statusCode");
 	newLine();
@@ -325,7 +330,7 @@ function logSend($topicId, $userId, $statusCode, $serverName, $databaseName) {
 	echo nl2br ("Rows inserted: $rowsInserted \n");
 
 	if($rowsInserted == 0) {
-		echo logEvent("Logging send failed insert: $logQuery");
+		echo logEvent("Error. Logging send failed insert: $logQuery");
 		newLine();
 		// TODO notify here if we didn't insert anything, would be a problem
 	}
