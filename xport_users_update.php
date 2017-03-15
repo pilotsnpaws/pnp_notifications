@@ -31,7 +31,7 @@ newline();
 
 $queryOutdatedAWSUsers = "select GROUP_CONCAT(user_id) as str_user_ids " .
 	" from $table_aws_users " . 
-	" where updated_ts < date_add(CURRENT_TIMESTAMP, INTERVAL -1 DAY) " . 
+	" where updated_ts < date_add(CURRENT_TIMESTAMP, INTERVAL -23 HOUR) " . 
 	" and source_server = '$f_server' and source_database = '$f_database' " .
 	" order by updated_ts; ";
 
