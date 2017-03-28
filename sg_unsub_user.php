@@ -36,13 +36,13 @@ $query_params = json_decode('{"start_time": ' . $startTime . '}');  //, "end_tim
 $response = $sg->client->suppression()->unsubscribes()->get(null, $query_params);
 $sgStatusCode = $response->statusCode();
 echo "Status code: $sgStatusCode" ;
+newLine();
 
 if ($sgStatusCode != '200') {
-  echo logEvent("Error. Sendgrid returned non-200 status code. Returned $sgStatusCode");
+  echo logEvent("Error. Sendgrid returned non-200 status code. Returned $sgStatusCode. Check API key setup.");
   exit();
 }
 
-newLine();
 $sgResponse = $response->body();
 newLine();
 
@@ -57,9 +57,7 @@ $i = 0;
 while ($i < $unsubCount) { // we can use < instead of <= because the array starts count at 0, not 1
   $createdTS = $jsonData[$i]["created"] ;
   $unsubEmail = $jsonData[$i]["email"];
-  echo "Created: " . date('Y-m-d h:i:s',$createdTS);
-  newLine();
-  echo "Email: " . $unsubEmail;
+  echo "Email: $unsubEmail was unsubscribed at " . date('Y-m-d h:i:s',$createdTS);
   newLine();
   //print_r($jsonData[$i]);
   // lookup the phpbb userID for the email address
@@ -121,7 +119,8 @@ function setFlyingDistanceByUserId($userId, $flyingDistance)
 		echo logEvent("Error $f_mysqli->error to update flying distance from forum, exiting. Query: $queryGetFlyingDistance");
 	  } else {
 			echo logEvent("Updated flying distance for user ID $userId: $flyingDistance");
-			newLine();		
+			newLine();
+      newLine();
 	    } 
   
 } // end setFlyingDistanceByUserId
