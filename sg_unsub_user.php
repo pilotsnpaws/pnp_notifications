@@ -34,7 +34,14 @@ echo $startTime;
 newLine();
 $query_params = json_decode('{"start_time": ' . $startTime . '}');  //, "end_time": 1489456410
 $response = $sg->client->suppression()->unsubscribes()->get(null, $query_params);
-echo "Status code: " . $response->statusCode();
+$sgStatusCode = $response->statusCode();
+echo "Status code: $sgStatusCode" ;
+
+if ($sgStatusCode != '200') {
+  echo logEvent("Error. Sendgrid returned non-200 status code. Returned $sgStatusCode");
+  exit();
+}
+
 newLine();
 $sgResponse = $response->body();
 newLine();
