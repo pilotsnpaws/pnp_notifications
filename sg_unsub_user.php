@@ -119,8 +119,10 @@ while ($i < $totalCount) { // we can use < instead of <= because the array start
 
   // update phpbb user profile to 0 flying distance, only if we get a user ID for email
   if (!is_null($userId)) {
-    if (getFlyingDistanceByUserId($userId) > 0) {
+    if (1 == 1) { // force to run for now, use line below once run a bit
+  //  if (getFlyingDistanceByUserId($userId) > 0) {
       setFlyingDistanceByUserId($userId,0,$sgType);  
+      setEmailOptionsByUser($userId);
     } else {
       echo "User ID $userId flying distance already 0, no need to update.";
       newLine();
@@ -195,6 +197,25 @@ function setFlyingDistanceByUserId($userId, $flyingDistance, $reason)
 		echo logEvent("Error $f_mysqli->error to update flying distance from forum, exiting. Query: $queryGetFlyingDistance");
 	  } else {
 			echo logEvent("Updated flying distance for user ID $userId: $flyingDistance");
+			newLine();
+	    } 
+  
+} // end setFlyingDistanceByUserId
+
+function setEmailOptionsByUser($userId)
+{
+	global $table_users, $f_database, $f_mysqli;
+  // set the user to not get mass email nor allow emails to be sent from other users
+  $queryUpdateEmailOptions = "UPDATE $table_users SET user_allow_massemail = 0, user_allow_viewemail = 0 " .
+      " WHERE user_id = $userId";
+  echo $queryUpdateEmailOptions;
+  newLine();
+  $result = $f_mysqli->query($queryUpdateEmailOptions); 
+  
+  if(!$result) {
+		echo logEvent("Error $f_mysqli->error to update email options from forum, exiting. Query: $queryUpdateEmailOptions");
+	  } else {
+			echo logEvent("Updated email options for user ID $userId");
 			newLine();
       newLine();
 	    } 
