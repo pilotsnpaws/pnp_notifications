@@ -27,7 +27,7 @@ $sg = new \SendGrid($apiKey);
 
 //  get unsubscribes from sendgrid
 newLine();
-$startTime = time() - 1086400; //86400 seconds = 1 day
+$startTime = time() - 86400; //86400 seconds = 1 day
 $query_params = json_decode('{"start_time": ' . $startTime . '}');  //, "end_time": 1489456410
 $response = $sg->client->suppression()->unsubscribes()->get(null, $query_params);
 $sgStatusCode = $response->statusCode();
@@ -125,7 +125,7 @@ function getForumUserIdByEmail($userEmail)
 	if(!$result) {
 		echo logEvent("Error $f_mysqli->error to get user ID from email from forum, exiting. Query: $queryIdByEmail");
   } elseif($result->num_rows == 0) {
-    echo logEvent("Error. No user ID found for $userEmail - meaning email was changed or Sendgrid problem");
+    echo logEvent("Warning. No user ID found for $userEmail - meaning email was changed or Sendgrid problem");
     newLine();
   } else {
 		while($row = $result->fetch_assoc()){ 
