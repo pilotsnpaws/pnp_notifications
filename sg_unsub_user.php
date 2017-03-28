@@ -140,7 +140,7 @@ while ($i < $totalCount) { // we can use < instead of <= because the array start
 function getForumUserIdByEmail($userEmail)
 {
 	global $table_users, $f_database, $f_mysqli;
-	$queryIdByEmail = "SELECT user_id from $table_users where user_email = '$userEmail';" ;
+	$queryIdByEmail = "SELECT user_id, FROM_UNIXTIME(user_lastvisit) as last_visit from $table_users where user_email = '$userEmail';" ;
 	echo $queryIdByEmail;
 	newLine();
 	$result = $f_mysqli->query($queryIdByEmail) ; //or die ($f_mysqli->error);
@@ -153,7 +153,8 @@ function getForumUserIdByEmail($userEmail)
   } else {
 		while($row = $result->fetch_assoc()){ 
 			$user_id = $row['user_id'];
-			echo logEvent("User ID for email $userEmail: $user_id");
+      $last_visit = $row['last_visit'];
+			echo logEvent("User ID for email $userEmail: $user_id. Last visit $last_visit");
 			newLine();
 		}
 			return $user_id;		
