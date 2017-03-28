@@ -27,37 +27,67 @@ $sg = new \SendGrid($apiKey);
 
 //  get unsubscribes from sendgrid
 newLine();
-echo "start all bounces - /supression/unsubscribes" ; 
-newLine();
-$startTime = time() - 86400; //86400 seconds = 1 day
-echo $startTime;
-newLine();
+$startTime = time() - 1086400; //86400 seconds = 1 day
 $query_params = json_decode('{"start_time": ' . $startTime . '}');  //, "end_time": 1489456410
 $response = $sg->client->suppression()->unsubscribes()->get(null, $query_params);
 $sgStatusCode = $response->statusCode();
-echo "Status code: $sgStatusCode" ;
+echo "Unsubscribes status code: $sgStatusCode" ;
 newLine();
 
 if ($sgStatusCode != '200') {
-  echo logEvent("Error. Sendgrid returned non-200 status code. Returned $sgStatusCode. Check API key setup.");
+  echo logEvent("Error. Sendgrid returned non-200 status code for unsubscribes query. Returned $sgStatusCode. Check API key setup.");
   exit();
 }
 
 $sgResponse = $response->body();
+
+$jsonDataUnsub = json_decode($sgResponse, TRUE);
+$unsubCount = count($jsonDataUnsub);
+echo "Unsubscribes returned: " . $unsubCount;
 newLine();
 
-$jsonData = json_decode($sgResponse, TRUE);
+// add type to array
+foreach( $jsonDataUnsub as &$row) {
+    $row["type"] = 'unsub';
+}
+
+//  get spam reports from sendgrid
 newLine();
-$unsubCount = count($jsonData);
-echo "Results returned: " . $unsubCount;
+$startTime = time() - 1086400; //86400 seconds = 1 day
+$query_params = json_decode('{"start_time": ' . $startTime . '}');  //, "end_time": 1489456410
+$responseSpam = $sg->client->suppression()->spam_reports()->get(null, $query_params);
+$sgStatusCode = $responseSpam->statusCode();
+echo "Spam status code: $sgStatusCode" ;
 newLine();
+
+if ($sgStatusCode != '200') {
+  echo logEvent("Error. Sendgrid returned non-200 status code for spam query. Returned $sgStatusCode. Check API key setup.");
+  exit();
+}
+
+$sgResponseSpam = $responseSpam->body();
+
+$jsonDataSpam = json_decode($sgResponseSpam, TRUE);
+$spamCount = count($jsonDataSpam);
+echo "Spam returned: " . $spamCount;
+newLine();
+
+// add type to array
+foreach( $jsonDataSpam as &$row) {
+    $row["type"] = 'spam';
+}
+
+$jsonData = array_merge($jsonDataUnsub, $jsonDataSpam);
+$totalCount = count($jsonData);
+
 newLine();
 $i = 0;
 
-while ($i < $unsubCount) { // we can use < instead of <= because the array starts count at 0, not 1
+while ($i < $totalCount) { // we can use < instead of <= because the array starts count at 0, not 1
   $createdTS = $jsonData[$i]["created"] ;
   $unsubEmail = $jsonData[$i]["email"];
-  echo "Email: $unsubEmail was unsubscribed at " . date('Y-m-d h:i:s',$createdTS);
+  $sgType = $jsonData[$i]["type"];
+  echo "Email: $unsubEmail was reported $sgType at " . date('Y-m-d h:i:s',$createdTS);
   newLine();
   //print_r($jsonData[$i]);
   // lookup the phpbb userID for the email address
@@ -67,7 +97,7 @@ while ($i < $unsubCount) { // we can use < instead of <= because the array start
   // update phpbb user profile to 0 flying distance, only if we get a user ID for email
   if (!is_null($userId)) {
     if (getFlyingDistanceByUserId($userId) > 0) {
-      setFlyingDistanceByUserId($userId,0);  
+      setFlyingDistanceByUserId($userId,0,$sgType);  
     } else {
       echo "User ID $userId flying distance already 0, no need to update.";
       newLine();
@@ -107,23 +137,6 @@ function getForumUserIdByEmail($userEmail)
 	}
 } // end getForumUserIdByEmail
 
-function setFlyingDistanceByUserId($userId, $flyingDistance)
-{
-	global $table_profile, $f_database, $f_mysqli;
-  $queryUpdateFlyingDistance = "UPDATE $table_profile SET pf_flying_radius = $flyingDistance WHERE user_id = $userId";
-  echo $queryUpdateFlyingDistance;
-  newLine();
-  $result = $f_mysqli->query($queryUpdateFlyingDistance); 
-  
-  if(!$result) {
-		echo logEvent("Error $f_mysqli->error to update flying distance from forum, exiting. Query: $queryGetFlyingDistance");
-	  } else {
-			echo logEvent("Updated flying distance for user ID $userId: $flyingDistance");
-			newLine();
-      newLine();
-	    } 
-  
-} // end setFlyingDistanceByUserId
 
 function getFlyingDistanceByUserId($userId)
 {
@@ -143,5 +156,24 @@ function getFlyingDistanceByUserId($userId)
 		}
 			return $flyingDistance;		
 	}
-  
 } // end getFlyingDistanceByUserId
+
+
+function setFlyingDistanceByUserId($userId, $flyingDistance, $reason)
+{
+	global $table_profile, $f_database, $f_mysqli;
+  $queryUpdateFlyingDistance = "UPDATE $table_profile SET pf_flying_radius = $flyingDistance, pf_email_validation = '$reason' WHERE user_id = $userId";
+  echo $queryUpdateFlyingDistance;
+  newLine();
+  $result = $f_mysqli->query($queryUpdateFlyingDistance); 
+  
+  if(!$result) {
+		echo logEvent("Error $f_mysqli->error to update flying distance from forum, exiting. Query: $queryGetFlyingDistance");
+	  } else {
+			echo logEvent("Updated flying distance for user ID $userId: $flyingDistance");
+			newLine();
+      newLine();
+	    } 
+  
+} // end setFlyingDistanceByUserId
+
