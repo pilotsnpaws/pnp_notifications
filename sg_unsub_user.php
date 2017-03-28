@@ -20,8 +20,6 @@ echo "Sendgrid API Key: $apiKey";
 newLine();
 newLine();
 
-
-// If you are using Composer
 require 'vendor/autoload.php';
 $sg = new \SendGrid($apiKey);
 
@@ -34,6 +32,7 @@ $sgStatusCode = $response->statusCode();
 echo "Unsubscribes status code: $sgStatusCode" ;
 newLine();
 
+// todo: turn this into function, as we use it 3x
 if ($sgStatusCode != '200') {
   echo logEvent("Error. Sendgrid returned non-200 status code for unsubscribes query. Returned $sgStatusCode. Check API key setup.");
   exit();
@@ -53,7 +52,6 @@ foreach( $jsonDataUnsub as &$row) {
 
 //  get spam reports from sendgrid
 newLine();
-$startTime = time() - 1086400; //86400 seconds = 1 day
 $query_params = json_decode('{"start_time": ' . $startTime . '}');  //, "end_time": 1489456410
 $responseSpam = $sg->client->suppression()->spam_reports()->get(null, $query_params);
 $sgStatusCode = $responseSpam->statusCode();
@@ -77,7 +75,32 @@ foreach( $jsonDataSpam as &$row) {
     $row["type"] = 'spam';
 }
 
-$jsonData = array_merge($jsonDataUnsub, $jsonDataSpam);
+//  get bounces from sendgrid
+newLine();
+$query_params = json_decode('{"start_time": ' . $startTime . '}');  //, "end_time": 1489456410
+$responseBounce = $sg->client->suppression()->bounces()->get(null, $query_params);
+$sgStatusCode = $responseBounce->statusCode();
+echo "Bounce status code: $sgStatusCode" ;
+newLine();
+
+if ($sgStatusCode != '200') {
+  echo logEvent("Error. Sendgrid returned non-200 status code for bounce query. Returned $sgStatusCode. Check API key setup.");
+  exit();
+}
+
+$sgResponseBounce = $responseBounce->body();
+
+$jsonDataBounce = json_decode($sgResponseBounce, TRUE);
+$BounceCount = count($jsonDataBounce);
+echo "Bounces returned: " . $BounceCount;
+newLine();
+
+// add type to array
+foreach( $jsonDataBounce as &$row) {
+    $row["type"] = 'bounce';
+}
+
+$jsonData = array_merge($jsonDataUnsub, $jsonDataSpam, $jsonDataBounce);
 $totalCount = count($jsonData);
 
 newLine();
