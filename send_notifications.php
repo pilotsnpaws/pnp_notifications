@@ -17,6 +17,13 @@ include "pnp_db.php";
 
 echo "Environment: $environment"; 
 newline();
+echo "Send mail: " ;
+echo $sendMailFlag ? 'true' : 'false';
+newLine();
+echo "Send mail to actual email addresses: " ;
+echo $sendMailRecipients ? 'true' : 'false';
+newLine();
+newLine();
 
 // show IP for now in dev, just so we know when it changes to manage the AWS firewall
 // showIP();
@@ -175,7 +182,7 @@ function buildEmails($topicId, $topicFromToText) {
 				while($row = $result->fetch_assoc()){
 					$userId						= $row['user_id'];
 					$userEmail        = $row['user_email'];
-					$userName         = $row['username'];
+					$userName         = htmlspecialchars_decode($row['username']);
 					$userFlyingDistance = $row['pf_flying_radius'];
 					$userHomeAirport  = strToUpper($row['apt_id']);
 					$userDistSend     = $row['send_dist'];
