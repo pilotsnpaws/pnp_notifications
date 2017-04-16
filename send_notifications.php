@@ -283,7 +283,7 @@ function buildEmails($topicId, $topicFromToText) {
 	// todo - add check here to make sure it matches
 	
 	// function logStathat($stathatAccount, $statName, $statValue, $statType, $environment) 
-	logStathat2('notifEmailsSent', $emailSentCounter, 'value');
+	logStathat2('notifEmailsSent', $emailSentCounter, 'count');
 	newLine();
 	
 } // end buildEmails function
