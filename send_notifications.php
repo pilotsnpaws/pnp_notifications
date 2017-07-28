@@ -323,7 +323,7 @@ function logSend($topicId, $userId, $statusCode, $serverName, $databaseName) {
 			$notifyStatus = '1';
 		} else {
 			$notifyStatus = '2';	
-			echo logEvent("Error. SendGrid status code returned was not 202. We didn't send emails!");
+			echo logEvent("Error. SendGrid status code returned ($statusCode) was not 202. We didn't send emails!");
 		  logStathat2('notifEmailError', 1, 'count');
 			newLine();
 		}
