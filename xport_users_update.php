@@ -63,6 +63,7 @@ $queryRecentActiveUsersForum = "SELECT last_visit, user_id, user_email, user_reg
 	" city, state, CURRENT_TIMESTAMP, user_inactive_reason " . 
 		" FROM $table_users_details " .
 		" WHERE last_visit > date_add(CURRENT_TIMESTAMP, INTERVAL -3 HOUR)" .
+//		" WHERE last_visit BETWEEN date_add(CURRENT_TIMESTAMP, INTERVAL -360 DAY) AND date_add(CURRENT_TIMESTAMP, INTERVAL -250 DAY)" .		
 		" OR user_id IN ($outdatedUserIds) " .
 		" ORDER BY user_id LIMIT 2000 "; // increase once we know it won't blow up
 echo "queryRecentActiveUsersForum: $queryRecentActiveUsersForum" ;
@@ -110,17 +111,53 @@ if(!$result) {
 				" WHERE user_id = $userId and source_server = '$f_server' and source_database = '$f_database'; ";
 
 			$updateResult = $aws_mysqli->query($queryUpdate) ; // or die ($aws_mysqli->error);
+			$rowsAffected = $aws_mysqli->affected_rows ;
 
 			if(!$updateResult) {
 					echo logEvent("Error: $aws_mysqli->error for update: $queryUpdate");
-				} else
+				}
+				elseif ($rowsAffected == 0) 
 				{
-					echo logEvent("Successful update for $username / id $userId");
+					// handle if we don't update a user. Usually means they arent in AWS for some reason. 
+					echo logEvent("Error: Updated 0 rows for $username / id $userId / affected $rowsAffected");
+					newLine();
+					echo logEvent("Update query was: $queryUpdate");
+					// if $rowsAffected = 0, we'll insert the user below, out of this if
+				} 
+				else
+				{
+					echo logEvent("Successful update for $username / id $userId / affected $rowsAffected");
 					// echo logEvent("Success: $queryUpdate");
 					$rowsSuccessCounter = $rowsSuccessCounter + 1; 
 				}
 
 			newLine();
+
+			// if the user wasn't updated, let's insert them. sometimes we have users that fell out of the initial insert
+			// this insert comes from xport_user.php
+			if($rowsAffected == 0){
+				// insert user into AWS 
+					$insertFields = " user_id, last_visit, user_email, user_regdate, username, pf_flying_radius, " .
+						" pf_foster_yn, pf_pilot_yn, apt_id, apt_name, zip, lat, lon, location_point, " .
+						" city, state, updated_source_ts, source_server, source_database, user_inactive_reason " ; 
+					$queryInsert = " INSERT INTO $table_aws_users ($insertFields) VALUES " .
+						" ( $userId, '$lastVisit', '$userEmail', '$userRegdate', '$username', '$flyingRadius', " . 
+						" '$foster', '$pilot', '$aptId', '$aptName', '$zip', '$lat', '$lon', " .
+						" ST_GeomFromText('POINT($lon $lat)'), '$city', '$state', '$currentTimestamp', " .
+						" '$f_server', '$f_database', $userInactiveReason); ";
+
+					$insertResult = $aws_mysqli->query($queryInsert) ; // or die ($aws_mysqli->error);
+
+					if(!$insertResult) {
+							echo logEvent("Error: $aws_mysqli->error for insert: $queryInsert");
+						} else
+						{
+							echo logEvent("Successful insert to $username / id $userId");
+							$rowsSuccessCounter = $rowsSuccessCounter + 1; 
+						}
+
+					newLine();
+				}
 
 	} // end while
 }
