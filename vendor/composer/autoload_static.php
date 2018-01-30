@@ -4,11 +4,25 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit53ee7d7d02bed860dcb6c6f4ed5a7ffa
+class ComposerStaticInit2317ed67e2994e81a9ac2a3c2a57af8a
 {
     public static $files = array (
         '3f8bdd3b35094c73a26f0106e3c0f8b2' => __DIR__ . '/..' . '/sendgrid/sendgrid/lib/SendGrid.php',
         '9dda55337a76a24e949fbcc5d905a2c7' => __DIR__ . '/..' . '/sendgrid/sendgrid/lib/helpers/mail/Mail.php',
+    );
+
+    public static $prefixLengthsPsr4 = array (
+        'S' => 
+        array (
+            'SendGrid\\' => 9,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'SendGrid\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/sendgrid/php-http-client/lib',
+        ),
     );
 
     public static $prefixesPsr0 = array (
@@ -18,17 +32,15 @@ class ComposerStaticInit53ee7d7d02bed860dcb6c6f4ed5a7ffa
             array (
                 0 => __DIR__ . '/..' . '/sendgrid/smtpapi/lib',
             ),
-            'SendGrid' => 
-            array (
-                0 => __DIR__ . '/..' . '/sendgrid/php-http-client/lib',
-            ),
         ),
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixesPsr0 = ComposerStaticInit53ee7d7d02bed860dcb6c6f4ed5a7ffa::$prefixesPsr0;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit2317ed67e2994e81a9ac2a3c2a57af8a::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit2317ed67e2994e81a9ac2a3c2a57af8a::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit2317ed67e2994e81a9ac2a3c2a57af8a::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }

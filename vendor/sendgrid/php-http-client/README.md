@@ -10,12 +10,18 @@ All updates to this library is documented in our [CHANGELOG](https://github.com/
 
 # Installation
 
+## Prerequisites
+
+- PHP version 5.6 or 7.0
+
+## Install with Composer
+
 Add php-http-client to your `composer.json` file. If you are not using [Composer](http://getcomposer.org), you should be. It's an excellent way to manage dependencies in your PHP application.
 
 ```json
 {
   "require": {
-    "sendgrid/php-http-client": "3.*"
+    "sendgrid/php-http-client": "~3.8"
   }
 }
 ```
@@ -41,7 +47,7 @@ Here is a quick example:
 ```php
 require 'vendor/autoload.php';
 $global_headers = array(Authorization: Basic XXXXXXX);
-$client = SendGrid\Client('base_url', 'global_headers');
+$client = SendGrid\Client('base_url', global_headers);
 $response = $client->your()->api()->_($param)->call()->get();
 print $response->statusCode();
 print $response->headers();
@@ -53,7 +59,7 @@ print $response->body();
 ```php
 require 'vendor/autoload.php';
 $global_headers = array(Authorization: Basic XXXXXXX);
-$client = SendGrid\Client('base_url', 'global_headers');
+$client = SendGrid\Client('base_url', global_headers);
 $query_params = array('hello' => 0, 'world' => 1);
 $request_headers = array('X-Test' => 'test');
 $data = array('some' => 1, 'awesome' => 2, 'data' => 3);
@@ -94,5 +100,4 @@ php-http-client is guided and supported by the SendGrid [Developer Experience Te
 
 php-http-client is maintained and funded by SendGrid, Inc. The names and logos for php-http-client are trademarks of SendGrid, Inc.
 
-![SendGrid Logo]
-(https://uiux.s3.amazonaws.com/2016-logos/email-logo%402x.png)
+![SendGrid Logo](https://uiux.s3.amazonaws.com/2016-logos/email-logo%402x.png)

@@ -128,14 +128,14 @@ class MailTest_Mail extends \PHPUnit_Framework_TestCase
 
         $mail_settings = new MailSettings();
         $bcc_settings = new BccSettings();
-        $bcc_settings->setEnable(True);
+        $bcc_settings->setEnable(true);
         $bcc_settings->setEmail("test@example.com");
         $mail_settings->setBccSettings($bcc_settings);
         $sandbox_mode = new SandBoxMode();
-        $sandbox_mode->setEnable(True);
+        $sandbox_mode->setEnable(true);
         $mail_settings->setSandboxMode($sandbox_mode);
         $bypass_list_management = new BypassListManagement();
-        $bypass_list_management->setEnable(True);
+        $bypass_list_management->setEnable(true);
         $mail_settings->setBypassListManagement($bypass_list_management);
         $footer = new Footer();
         $footer->setEnable(true);
@@ -143,7 +143,7 @@ class MailTest_Mail extends \PHPUnit_Framework_TestCase
         $footer->setHtml("<html><body>Footer Text</body></html>");
         $mail_settings->setFooter($footer);
         $spam_check = new SpamCheck();
-        $spam_check->setEnable(True);
+        $spam_check->setEnable(true);
         $spam_check->setThreshold(1);
         $spam_check->setPostToUrl("https://spamcatcher.sendgrid.com");
         $mail_settings->setSpamCheck($spam_check);
@@ -152,20 +152,20 @@ class MailTest_Mail extends \PHPUnit_Framework_TestCase
         $tracking_settings = new TrackingSettings();
         $click_tracking = new ClickTracking();
         $click_tracking->setEnable(true);
-        $click_tracking->setEnableText(True);
+        $click_tracking->setEnableText(true);
         $tracking_settings->setClickTracking($click_tracking);
         $open_tracking = new OpenTracking();
-        $open_tracking->setEnable(True);
+        $open_tracking->setEnable(true);
         $open_tracking->setSubstitutionTag("Optional tag to replace with the open image in the body of the message");
         $tracking_settings->setOpenTracking($open_tracking);
         $subscription_tracking = new SubscriptionTracking();
-        $subscription_tracking->setEnable(True);
+        $subscription_tracking->setEnable(true);
         $subscription_tracking->setText("text to insert into the text/plain portion of the message");
         $subscription_tracking->setHtml("<html><body>html to insert into the text/html portion of the message</body></html>");
         $subscription_tracking->setSubstitutionTag("Optional tag to replace with the open image in the body of the message");
         $tracking_settings->setSubscriptionTracking($subscription_tracking);
         $ganalytics = new Ganalytics();
-        $ganalytics->setEnable(True);
+        $ganalytics->setEnable(true);
         $ganalytics->setCampaignSource("some source");
         $ganalytics->setCampaignTerm("some term");
         $ganalytics->setCampaignContent("some content");
@@ -174,7 +174,21 @@ class MailTest_Mail extends \PHPUnit_Framework_TestCase
         $tracking_settings->setGanalytics($ganalytics);
         $mail->setTrackingSettings($tracking_settings);
 
+        $reply_to = new ReplyTo("test@example.com", "Optional Name");
+        $mail->setReplyTo($reply_to);
+
+        $json = json_encode($mail);
+
+        $this->assertEquals($json, '{"from":{"name":"DX","email":"test@example.com"},"personalizations":[{"to":[{"name":"Example User","email":"test@example.com"},{"name":"Example User","email":"test@example.com"}],"cc":[{"name":"Example User","email":"test@example.com"},{"name":"Example User","email":"test@example.com"}],"bcc":[{"name":"Example User","email":"test@example.com"},{"name":"Example User","email":"test@example.com"}],"subject":"Hello World from the SendGrid PHP Library","headers":{"X-Test":"test","X-Mock":"true"},"substitutions":{"%name%":"Example User","%city%":"Denver"},"custom_args":{"user_id":"343","type":"marketing"},"send_at":1443636843},{"to":[{"name":"Example User","email":"test@example.com"},{"name":"Example User","email":"test@example.com"}],"cc":[{"name":"Example User","email":"test@example.com"},{"name":"Example User","email":"test@example.com"}],"bcc":[{"name":"Example User","email":"test@example.com"},{"name":"Example User","email":"test@example.com"}],"subject":"Hello World from the SendGrid PHP Library","headers":{"X-Test":"test","X-Mock":"true"},"substitutions":{"%name%":"Example User","%city%":"Denver"},"custom_args":{"user_id":"343","type":"marketing"},"send_at":1443636843}],"subject":"Hello World from the SendGrid PHP Library","content":[{"type":"text\/plain","value":"some text here"},{"type":"text\/html","value":"<html><body>some text here<\/body><\/html>"}],"attachments":[{"content":"TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdC4gQ3JhcyBwdW12","type":"application\/pdf","filename":"balance_001.pdf","disposition":"attachment","content_id":"Balance Sheet"},{"content":"BwdW","type":"image\/png","filename":"banner.png","disposition":"inline","content_id":"Banner"}],"template_id":"439b6d66-4408-4ead-83de-5c83c2ee313a","sections":{"%section1%":"Substitution Text for Section 1","%section2%":"Substitution Text for Section 2"},"headers":{"X-Test1":"1","X-Test2":"2"},"categories":["May","2016"],"custom_args":{"campaign":"welcome","weekday":"morning"},"send_at":1443636842,"asm":{"group_id":99,"groups_to_display":[4,5,6,7,8]},"ip_pool_name":"23","mail_settings":{"bcc":{"enable":true,"email":"test@example.com"},"bypass_list_management":{"enable":true},"footer":{"enable":true,"text":"Footer Text","html":"<html><body>Footer Text<\/body><\/html>"},"sandbox_mode":{"enable":true},"spam_check":{"enable":true,"threshold":1,"post_to_url":"https:\/\/spamcatcher.sendgrid.com"}},"tracking_settings":{"click_tracking":{"enable":true,"enable_text":true},"open_tracking":{"enable":true,"substitution_tag":"Optional tag to replace with the open image in the body of the message"},"subscription_tracking":{"enable":true,"text":"text to insert into the text\/plain portion of the message","html":"<html><body>html to insert into the text\/html portion of the message<\/body><\/html>","substitution_tag":"Optional tag to replace with the open image in the body of the message"},"ganalytics":{"enable":true,"utm_source":"some source","utm_medium":"some medium","utm_term":"some term","utm_content":"some content","utm_campaign":"some name"}},"reply_to":{"email":"test@example.com","name":"Optional Name"}}');
+          
         $reply_to = new ReplyTo("test@example.com");
+        $mail->setReplyTo($reply_to);
+
+        $json = json_encode($mail);
+
+        $this->assertEquals($json, '{"from":{"name":"DX","email":"test@example.com"},"personalizations":[{"to":[{"name":"Example User","email":"test@example.com"},{"name":"Example User","email":"test@example.com"}],"cc":[{"name":"Example User","email":"test@example.com"},{"name":"Example User","email":"test@example.com"}],"bcc":[{"name":"Example User","email":"test@example.com"},{"name":"Example User","email":"test@example.com"}],"subject":"Hello World from the SendGrid PHP Library","headers":{"X-Test":"test","X-Mock":"true"},"substitutions":{"%name%":"Example User","%city%":"Denver"},"custom_args":{"user_id":"343","type":"marketing"},"send_at":1443636843},{"to":[{"name":"Example User","email":"test@example.com"},{"name":"Example User","email":"test@example.com"}],"cc":[{"name":"Example User","email":"test@example.com"},{"name":"Example User","email":"test@example.com"}],"bcc":[{"name":"Example User","email":"test@example.com"},{"name":"Example User","email":"test@example.com"}],"subject":"Hello World from the SendGrid PHP Library","headers":{"X-Test":"test","X-Mock":"true"},"substitutions":{"%name%":"Example User","%city%":"Denver"},"custom_args":{"user_id":"343","type":"marketing"},"send_at":1443636843}],"subject":"Hello World from the SendGrid PHP Library","content":[{"type":"text\/plain","value":"some text here"},{"type":"text\/html","value":"<html><body>some text here<\/body><\/html>"}],"attachments":[{"content":"TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdC4gQ3JhcyBwdW12","type":"application\/pdf","filename":"balance_001.pdf","disposition":"attachment","content_id":"Balance Sheet"},{"content":"BwdW","type":"image\/png","filename":"banner.png","disposition":"inline","content_id":"Banner"}],"template_id":"439b6d66-4408-4ead-83de-5c83c2ee313a","sections":{"%section1%":"Substitution Text for Section 1","%section2%":"Substitution Text for Section 2"},"headers":{"X-Test1":"1","X-Test2":"2"},"categories":["May","2016"],"custom_args":{"campaign":"welcome","weekday":"morning"},"send_at":1443636842,"asm":{"group_id":99,"groups_to_display":[4,5,6,7,8]},"ip_pool_name":"23","mail_settings":{"bcc":{"enable":true,"email":"test@example.com"},"bypass_list_management":{"enable":true},"footer":{"enable":true,"text":"Footer Text","html":"<html><body>Footer Text<\/body><\/html>"},"sandbox_mode":{"enable":true},"spam_check":{"enable":true,"threshold":1,"post_to_url":"https:\/\/spamcatcher.sendgrid.com"}},"tracking_settings":{"click_tracking":{"enable":true,"enable_text":true},"open_tracking":{"enable":true,"substitution_tag":"Optional tag to replace with the open image in the body of the message"},"subscription_tracking":{"enable":true,"text":"text to insert into the text\/plain portion of the message","html":"<html><body>html to insert into the text\/html portion of the message<\/body><\/html>","substitution_tag":"Optional tag to replace with the open image in the body of the message"},"ganalytics":{"enable":true,"utm_source":"some source","utm_medium":"some medium","utm_term":"some term","utm_content":"some content","utm_campaign":"some name"}},"reply_to":{"email":"test@example.com"}}');
+
+        $reply_to = new ReplyTo("test@example.com", null);
         $mail->setReplyTo($reply_to);
 
         $json = json_encode($mail);

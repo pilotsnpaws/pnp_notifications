@@ -270,6 +270,7 @@ function buildEmails($topicId, $topicFromToText) {
 					else { // if false we mock a 202 response for testing
 						$sendResult = '202';
 						logSend($topicId, $userId, $sendResult, $f_server, $f_database);
+						echo logEvent("Error Email NOT sent for topic $topicId to user $userId");
 					}
 
 	
