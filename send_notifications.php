@@ -6,14 +6,37 @@
 
 //todo - show trip map image - like https://maps.googleapis.com/maps/api/staticmap?size=600x400&path=color:0xff0000ff|weight:5|91406|96150&key=AIzaSyB3rWsXKJiE_1EeDykiqOvwZqOe1gEaEac
 
+// define the prefix of each log message
+$logType = '[send notif]'; 
 
 // include forum config file for DB info
-include "settings.php";
-include ($configPath);
 include "xport_functions.php";
+
+if (file_exists("settings.php")) {
+		include "settings.php";
+	} else {
+		echo logEvent("Error. Settings file not found. Expected in same folder.");
+		exit ("Error. Exiting.");
+	}
+
+if (file_exists($configPath)) {
+		include ($configPath);
+	} else {
+		echo logEvent("Error. Config file not found where expected: $configPath - check settings.php file");
+		exit ("Error. Exiting.");
+	}
+
+if (file_exists("pnp_db.php")) {
+		include "pnp_db.php";
+	} else {
+		echo logEvent("Error. pnp_db config file not found. Expected in same folder.");
+		exit ("Error. Exiting.");
+	}
+
+
 require 'vendor/autoload.php';
 include "email_trip_notif_template.php";
-include "pnp_db.php";
+
 
 echo "Environment: $environment"; 
 newline();
@@ -28,8 +51,7 @@ newLine();
 // show IP for now in dev, just so we know when it changes to manage the AWS firewall
 // showIP();
 
-// define the prefix of each log message
-$logType = '[send notif]'; 
+
 
 // define tables, we could use phpbb's constants.php but unsure how that will work with upgrade
 // TODO might want to make these actually constants instead of vars

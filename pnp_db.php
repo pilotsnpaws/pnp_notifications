@@ -15,7 +15,7 @@ $f_mysqli = new mysqli($f_server, $f_username, $f_password, $f_database);
  // Check forum connection
 if (mysqli_connect_errno($f_mysqli))
   {
-		echo logEvent("Failed to connect to forum MySQL $f_server/$f_database: " . mysqli_connect_error());
+		echo logEvent("Error. Failed to connect to forum MySQL $f_server/$f_database: " . mysqli_connect_error());
 		exit();
   } else {
 		echo nl2br ("Connected to forum database: $f_server/$f_database \n" ) ; 
@@ -33,13 +33,26 @@ if (!$aws_mysqli) {
 
 // set SSL using AWS CA
 $aws_mysqli->ssl_set(null,null,'rds-combined-ca-bundle.pem',null,null);
+$aws_mysqli->options(MYSQLI_CLIENT_SSL, TRUE);
 
-if (!$aws_mysqli->real_connect($aws_server, $aws_username, $aws_password, $aws_database)) {
-  echo logEvent("Failed to connect to AWS MySQL $aws_server/$aws_database: " . mysqli_connect_error());
-	exit("Failed to connect to AWS MySQL $aws_server/$aws_database: " . mysqli_connect_error());
-} else {
-		echo nl2br ("Connected to AWS database: $aws_server/$aws_database \n" ) ; 
-}
+$attemptLimit = 10;
+$attempts = 0;
+$retryWait = 5;
+
+do {
+	if (!$aws_mysqli->real_connect($aws_server, $aws_username, $aws_password, $aws_database)) {
+	 	$attempts++;
+  echo logEvent("Failed to connect to AWS MySQL on $attempts try: $aws_server/$aws_database: " . mysqli_connect_error());
+	 	sleep($retryWait);
+		$retryWait = $retryWait + 5;
+		if ($attempts >= $attemptLimit){
+			exit("Error could not connect after $attempts tries to AWS MySQL $aws_server/$aws_database: " . mysqli_connect_error());	
+		} 
+	} else {
+		echo nl2br ("Connected to AWSdatabase : $aws_server/$aws_database \n" ) ; 
+		break;
+	}
+} while($attempts < $attemptLimit);
 
 $res = $aws_mysqli->query("SHOW STATUS LIKE 'Ssl_cipher';");
 while($row = $res->fetch_array()) {
