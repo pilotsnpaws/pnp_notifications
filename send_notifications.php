@@ -12,12 +12,7 @@ $logType = '[send notif]';
 // include forum config file for DB info
 include "xport_functions.php";
 
-if (file_exists("settings.php")) {
-		include "settings.php";
-	} else {
-		echo logEvent("Error. Settings file not found. Expected in same folder.");
-		exit ("Error. Exiting.");
-	}
+include "settings.php";
 
 if (file_exists($configPath)) {
 		include ($configPath);
