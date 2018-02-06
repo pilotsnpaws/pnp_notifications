@@ -9,19 +9,28 @@
 // define the prefix of each log message
 $logType = '[send notif]'; 
 
+
+$scriptPath = realpath(dirname(__FILE__));
+
 // include forum config file for DB info
 include "xport_functions.php";
 
-include "settings.php";
-
-if (file_exists($configPath)) {
-		include ($configPath);
+if (file_exists($scriptPath . '/' . "settings.php")) {
+		include ("settings.php");
 	} else {
-		echo logEvent("Error. Config file not found where expected: $configPath - check settings.php file");
+		echo logEvent("Error. Settings file not found where expected: $scriptPath - check for settings.php file");
 		exit ("Error. Exiting.");
 	}
 
-if (file_exists("pnp_db.php")) {
+// config path is absolute
+if (file_exists($configPath)) {
+		include ($configPath);
+	} else {
+		echo logEvent("Error. Config file not found where expected: $configPath - check for config.php file");
+		exit ("Error. Exiting.");
+	}
+
+if (file_exists($scriptPath . '/' . "pnp_db.php")) {
 		include "pnp_db.php";
 	} else {
 		echo logEvent("Error. pnp_db config file not found. Expected in same folder.");
