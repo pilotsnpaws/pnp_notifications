@@ -42,7 +42,7 @@ $retryWait = 5;
 do {
 	if (!$aws_mysqli->real_connect($aws_server, $aws_username, $aws_password, $aws_database)) {
 	 	$attempts++;
-  echo logEvent("Failed to connect to AWS MySQL on $attempts try: $aws_server/$aws_database: " . mysqli_connect_error());
+  echo logEvent("Warning. Failed to connect to AWS MySQL on $attempts try: $aws_server/$aws_database: " . mysqli_connect_error());
 	 	sleep($retryWait);
 		$retryWait = $retryWait + 5;
 		if ($attempts >= $attemptLimit){

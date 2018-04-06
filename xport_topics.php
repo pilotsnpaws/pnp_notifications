@@ -17,6 +17,7 @@ $logType = '[topic xport]';
 
 // define tables, we could use phpbb's constants.php but unsure how that will work with upgrade
 $tableTopics = 'phpbb_topics'; 
+$tablePosts = 'phpbb_posts' ; 
 $tableAWSTopics = 'pnp_topics' ; // table in AWS that holds replicated topic data, but only columns we need
 $tableNotif = 'pnp_trip_notif_status' ; // table that knows if we sent a notif to a user for a topic yet
 $forum_id = '5' ; // we only care about the trip request forum
@@ -114,7 +115,7 @@ function getNextForum($maxTopic)
 
 function getNextTopicDetails($topic_id)
 {	
-	global $forum_id, $f_mysqli, $tableTopics;
+	global $forum_id, $f_mysqli, $tableTopics, $tablePosts;
 
 	$startTS = microtime(true);
 	echo "Start microtime: $startTS";
@@ -123,10 +124,12 @@ function getNextTopicDetails($topic_id)
 	$rowsSuccessCounter = 0;
 
 	// from forum db, get the next higher # topic 
-	$queryFields = " topic_id, from_unixtime(topic_time) as topic_time_ts, forum_id, topic_title, topic_first_poster_name, pnp_sendZip, pnp_recZip " ;
-	$query_get_next_topic = " SELECT $queryFields FROM $tableTopics " .
-		" WHERE forum_id = $forum_id AND topic_id >= $topic_id " .
-		" ORDER BY topic_id LIMIT 100 ;" ;
+	$queryFields = " t.topic_id, from_unixtime(t.topic_time) as topic_time_ts, t.forum_id, t.topic_title, t.topic_first_poster_name, " .
+		" t.pnp_sendZip, t.pnp_recZip, " .
+		" trim(substr(p.post_text, position('Breeds, weight, age:' in p.post_text)+20, position('Health condition:' in p.post_text) - (position('Breeds, weight, age:' in p.post_text) + 20) )) as breed_weight " ;
+	$query_get_next_topic = " SELECT $queryFields FROM $tableTopics t join $tablePosts p on t.topic_first_post_id = p.post_id " .
+		" WHERE t.forum_id = $forum_id AND t.topic_id >= $topic_id and t.pnp_sendZip is not null " .
+		" ORDER BY t.topic_id LIMIT 100 ;" ;
 	echo nl2br("Forum details query: $query_get_next_topic\n");
 
 	$f_mysqli->query("SET time_zone = 'GMT';") or die ($f_mysqli->error); // TODO add error handling log here
@@ -149,9 +152,10 @@ function getNextTopicDetails($topic_id)
 				$pnp_sendZip = $row['pnp_sendZip'];
 				$pnp_recZip = $row['pnp_recZip'];
 				$topic_time_ts = $row['topic_time_ts'];
+				$breed_weight = $f_mysqli->real_escape_string($row['breed_weight']);
 
 				// insert into AWS
-				insertTopic($topic_id, $forum_id, $topic_title, $topic_time_ts, $topic_first_poster_name, $pnp_sendZip, $pnp_recZip);
+				insertTopic($topic_id, $forum_id, $topic_title, $topic_time_ts, $topic_first_poster_name, $breed_weight, $pnp_sendZip, $pnp_recZip);
 				$rowsSuccessCounter = $rowsSuccessCounter + 1; 
 			}
 	}
@@ -165,7 +169,7 @@ function getNextTopicDetails($topic_id)
 
 }
 
-function insertTopic($topic_id, $forum_id, $topic_title, $topic_time_ts, $topic_first_poster_name, $pnp_sendZip, $pnp_recZip)
+function insertTopic($topic_id, $forum_id, $topic_title, $topic_time_ts, $topic_first_poster_name, $breed_weight, $pnp_sendZip, $pnp_recZip)
 {
 	// insert this topic and details into AWS
 	global $forum_id, $aws_mysqli, $tableAWSTopics, $f_server, $f_database, $f_mysqli, $rowsSuccessCounter;
@@ -211,11 +215,11 @@ function insertTopic($topic_id, $forum_id, $topic_title, $topic_time_ts, $topic_
 	}
 
 // now insert into the AWS topics table
-	$insertFields = " topic_id, forum_id, topic_title, topic_first_poster_name, pnp_sendZip, pnp_recZip, " .
+	$insertFields = " topic_id, forum_id, topic_title, topic_first_poster_name, breed_weight, pnp_sendZip, pnp_recZip, " .
 		" send_lat, send_lon, send_location_point, rec_lat, rec_lon, rec_location_point, topic_linestring, source_server, source_database, topic_time_ts " ;
 	$lineStringColumnValue = "LINESTRING($sendLon $sendLat, $recLon $recLat)";
 	$insertQuery = "INSERT INTO $tableAWSTopics ($insertFields) VALUES ( '$topic_id', '$forum_id', '$topic_title', '$topic_first_poster_name', " .
-		" '$pnp_sendZip', '$pnp_recZip', '$sendLat', '$sendLon', ST_GeomFromText('POINT($sendLon $sendLat)') , " . 
+		" '$breed_weight', '$pnp_sendZip', '$pnp_recZip', '$sendLat', '$sendLon', ST_GeomFromText('POINT($sendLon $sendLat)') , " . 
 		" '$recLat', '$recLon', ST_GeomFromText('POINT($recLon $recLat)'), " .
 		" ST_GeomFromText('$lineStringColumnValue'), '$f_server', '$f_database', '$topic_time_ts')"; 
 
