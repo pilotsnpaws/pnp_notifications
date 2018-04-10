@@ -280,6 +280,7 @@ $emailBody =
             <span style="font-size:14px; line-height: 14px;">
               Weight/breed: {notif_topicWeight}
             </span>
+            <br>
             <span style="font-size:14px; line-height: 14px;">
               Trip distance: {notif_topicDistance} miles
             </span>

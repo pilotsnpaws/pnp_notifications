@@ -237,6 +237,10 @@ function buildEmails($topicId, $topicFromToText) {
 					$emailHTMLContent = str_replace("{notif_forumUcpUrl}", forumUcpUrl, $emailHTMLContent) ;
 					$emailHTMLContent = str_replace("{notif_forumTechUrl}", forumTechUrl, $emailHTMLContent) ;
 					$emailHTMLContent = str_replace("{notif_UserTotalDist}", $userDistSend + $userDistRec + $topicDistance , $emailHTMLContent) ;
+					
+					// clean up $topicWeight as it comes from forum and has color/bold tags
+					$topicWeight = preg_replace('/\[(.*?)\]/',"",$topicWeight); 
+
 					$emailHTMLContent = str_replace("{notif_topicWeight}", $topicWeight, $emailHTMLContent) ;
 
 					// show email 
