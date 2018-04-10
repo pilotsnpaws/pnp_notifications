@@ -278,6 +278,9 @@ $emailBody =
         <div style="color:#555555;line-height:120%;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;">            
         	<div style="font-size:14px;line-height:14px;color:#555555;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;text-align:left;">
             <span style="font-size:14px; line-height: 14px;">
+              Weight/breed: {notif_topicWeight}
+            </span>
+            <span style="font-size:14px; line-height: 14px;">
               Trip distance: {notif_topicDistance} miles
             </span>
             <br>

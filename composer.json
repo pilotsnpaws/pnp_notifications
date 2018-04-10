@@ -2,6 +2,7 @@
     "minimum-stability" : "dev",
     "require": {
         "sendgrid/smtpapi": "~0.5",
-		"sendgrid/sendgrid": "~5.0"
+		"sendgrid/sendgrid": "~5.0",
+		"ext-mbstring": "*"
     }
 }

@@ -73,7 +73,7 @@ define("forumTechUrl","https://pilotsnpaws.org/forum/viewforum.php?f=17");
 $topicId = getNextTopic();
 
 $queryGetTopicDetails = "select t.topic_id, t.topic_title, t.pnp_sendZip, t.pnp_recZip,
-    ROUND((ST_distance_sphere(t.send_location_point, t.rec_location_point) / 1609),0) as trip_dist
+    ROUND((ST_distance_sphere(t.send_location_point, t.rec_location_point) / 1609),0) as trip_dist 
 from pnp_topics t
 where t.topic_id = $topicId " .
 	" and t.source_server = '$f_server' and t.source_database = '$f_database' ;";
@@ -175,7 +175,7 @@ function buildEmails($topicId, $topicFromToText) {
 				u.location_point, t.send_location_point, t.rec_location_point,
 				ST_buffer(u.location_point, pf_flying_radius * 0.01455581689886) as flying_circle,
 				topic_linestring,
-				ST_Intersects(ST_buffer(u.location_point, pf_flying_radius * 0.01455581689886), topic_linestring) as intersects
+				ST_Intersects(ST_buffer(u.location_point, pf_flying_radius * 0.01455581689886), topic_linestring) as intersects, t.breed_weight 
 		from pnp_topics t 
 			JOIN pnp_users u on t.source_server = u.source_server and t.source_database = u.source_database
 			LEFT OUTER JOIN pnp_trip_notif_status n on t.topic_id = n.topic_id AND u.user_id = n.user_id
@@ -216,6 +216,7 @@ function buildEmails($topicId, $topicFromToText) {
 					$topicId          = $row['topic_id'];
 					$topicTitle       = $row['topic_title'];
 					$topicDistance    = $row['trip_dist'];
+					$topicWeight 	  = $row['breed_weight'];
 
 					// build HTML content from template email_trip_notif_template.php
 					$emailHTMLContent = "$emailHead $emailBody </html>" ;
@@ -236,6 +237,7 @@ function buildEmails($topicId, $topicFromToText) {
 					$emailHTMLContent = str_replace("{notif_forumUcpUrl}", forumUcpUrl, $emailHTMLContent) ;
 					$emailHTMLContent = str_replace("{notif_forumTechUrl}", forumTechUrl, $emailHTMLContent) ;
 					$emailHTMLContent = str_replace("{notif_UserTotalDist}", $userDistSend + $userDistRec + $topicDistance , $emailHTMLContent) ;
+					$emailHTMLContent = str_replace("{notif_topicWeight}", $topicWeight, $emailHTMLContent) ;
 
 					// show email 
 					echo $emailHTMLContent;
@@ -243,7 +245,7 @@ function buildEmails($topicId, $topicFromToText) {
 					$mail = new SendGrid\Mail();
 
 					// TODO plain text email? do we even need plain text anymore?
-					$content = new SendGrid\Content("text/plain", "some text here");
+					$content = new SendGrid\Content("text/plain", "some xtext here");
 					$mail->addContent($content);
 
 					$content = new SendGrid\Content("text/html", $emailHTMLContent);
