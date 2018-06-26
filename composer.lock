@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "sendgrid/php-http-client",
-            "version": "3.9.5",
+            "version": "3.9.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sendgrid/php-http-client.git",
-                "reference": "dc5cc8d7f06ee94f634a856d39b88ccfc31a2f9c"
+                "reference": "e9a04d949ee2d19938ab83dc100933a3b41a8ec7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sendgrid/php-http-client/zipball/dc5cc8d7f06ee94f634a856d39b88ccfc31a2f9c",
-                "reference": "dc5cc8d7f06ee94f634a856d39b88ccfc31a2f9c",
+                "url": "https://api.github.com/repos/sendgrid/php-http-client/zipball/e9a04d949ee2d19938ab83dc100933a3b41a8ec7",
+                "reference": "e9a04d949ee2d19938ab83dc100933a3b41a8ec7",
                 "shasum": ""
             },
             "require": {
@@ -57,7 +57,7 @@
                 "rest",
                 "sendgrid"
             ],
-            "time": "2018-03-27 01:24:17"
+            "time": "2018-04-10 18:06:08"
         },
         {
             "name": "sendgrid/sendgrid",
