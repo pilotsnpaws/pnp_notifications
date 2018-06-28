@@ -222,6 +222,7 @@ function buildEmails($topicId, $topicFromToText) {
 					$emailHTMLContent = "$emailHead $emailBody </html>" ;
 
 					// replace the placeholders with real data
+					$emailHTMLContent = str_replace("{notif_userId}", $userId, $emailHTMLContent) ;
 					$emailHTMLContent = str_replace("{notif_userEmail}", $userEmail, $emailHTMLContent) ;
 					$emailHTMLContent = str_replace("{notif_userName}", $userName, $emailHTMLContent) ;
 					$emailHTMLContent = str_replace("{notif_userFlyingDistance}", $userFlyingDistance, $emailHTMLContent) ;

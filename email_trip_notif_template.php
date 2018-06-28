@@ -150,7 +150,7 @@ $emailBody =
         	<div style="font-size:14px;line-height:14px;color:#888888;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;text-align:left;">
           <p style="margin: 0;font-size: 14px;line-height: 17px;text-align: center"><span style="font-size:12px; line-height: 13px;">
           This message is intended for <a style="color:#0000FF" href="mailto:{notif_userEmail}">{notif_userEmail}</a>&nbsp;/ forum username: 
-          <a href="https://pilotsnpaws.org/forum/memberlist.php?mode=viewprofile&u={notif_userName}">{notif_userName}</a> 
+          <a href="https://pilotsnpaws.org/forum/memberlist.php?mode=viewprofile&u={notif_userId}">{notif_userName}</a> 
           </span><br></p></div>
         </div>
     </td>
