@@ -150,7 +150,7 @@ $emailBody =
         	<div style="font-size:14px;line-height:14px;color:#888888;font-family:Arial, \'Helvetica Neue\', Helvetica, sans-serif;text-align:left;">
           <p style="margin: 0;font-size: 14px;line-height: 17px;text-align: center"><span style="font-size:12px; line-height: 13px;">
           This message is intended for <a style="color:#0000FF" href="mailto:{notif_userEmail}">{notif_userEmail}</a>&nbsp;/ forum username: 
-          <a href="https://pilotsnpaws.org/forum/memberlist.php?mode=viewprofile&u={notif_userId}">{notif_userName}</a> 
+          <a clicktracking="off" href="https://pilotsnpaws.org/forum/memberlist.php?mode=viewprofile&u={notif_userId}">{notif_userName}</a> 
           </span><br></p></div>
         </div>
     </td>
@@ -300,17 +300,13 @@ $emailBody =
             <a style="color:#0000FF;text-decoration: underline; font-size:14px; line-height: 14px;" href="{notif_topicUrlPrefix}{notif_topicId}" target="_blank">{notif_topicUrlPrefix}{notif_topicId}</a>
           </span></p>
           <p style="margin: 0;font-size:14px;line-height: 14px">&nbsp;<br></p><p style="margin: 0;font-size:14px;line-height: 14px">
-          Click <a style="color:#0000FF;text-decoration: underline; font-size:14px; line-height: 14px;" href="{notif_mapUrlPrefix}{notif_topicId}" 
+          Click <a style="color:#0000FF;text-decoration: underline; font-size:14px; line-height: 14px;"  clicktracking="off" href="{notif_mapUrlPrefix}{notif_topicId}" 
             target="_blank">here to view this request on a&nbsp;map.</a>&nbsp;
           </p>
             <p style="margin: 0;font-size:14px;line-height: 14px"><br data-mce-bogus="1"></p><p style="margin: 0;font-size:14px;line-height: 14px">
             To reply to this trip request, please use the links above and do&nbsp;not reply to this email.
             Replies to this email are not sent back to the trip requestor.
             <br>
-            <br>
-              <b>
-                If you have any issues, questions or suggestions about this new trip email format - please post a reply on <a href="https://pilotsnpaws.org/forum/viewtopic.php?f=17&t=41713">this topic</a> in the forum.
-              </b>
             </p>
           </div>
         </div>
@@ -330,9 +326,9 @@ $emailBody =
             <br>
               <span style="font-size: 14px; line-height: 16px;">
                 Your settings currently will notify you of trips coming within {notif_userFlyingDistance} miles of {notif_userHomeAirport} airport. 
-                To change these settings, please click <a style="color:#0000FF;text-decoration: underline; font-size: 14px; line-height: 16px;" href="{notif_forumUcpUrl}" target="_blank">here</a>.&nbsp;</span><br><br><span style="font-size: 14px; line-height: 16px;">If you believe you received this message in error, please let us know by replying to this email, or posting on the <a style="color:#0000FF;text-decoration: underline; font-size: 14px; line-height: 16px;" href="{notif_forumTechUrl}" target="_blank">Technical Support forum</a>.&nbsp;</span></p><p style="margin: 0;font-size: 14px;line-height: 16px"><span style="font-size: 14px; line-height: 16px;">&nbsp;</span><br></p><p style="margin: 0;font-size: 14px;line-height: 16px"><span style="font-size: 14px; line-height: 16px;">
+                To change these settings, please click <a style="color:#0000FF;text-decoration: underline; font-size: 14px; line-height: 16px;" href="{notif_forumUcpUrl}" target="_blank">here</a>.&nbsp;</span><br><br><span style="font-size: 14px; line-height: 16px;">If you believe you received this message in error, please let us know by replying to this email, or posting on the <a style="color:#0000FF;text-decoration: underline; font-size: 14px; line-height: 16px;" clicktracking="off" href="{notif_forumTechUrl}&utm_term=techSupport" target="_blank">Technical Support forum</a>.&nbsp;</span></p><p style="margin: 0;font-size: 14px;line-height: 16px"><span style="font-size: 14px; line-height: 16px;">&nbsp;</span><br></p><p style="margin: 0;font-size: 14px;line-height: 16px"><span style="font-size: 14px; line-height: 16px;">
                 To unsubscribe from these notifications, reply to this email with the word UNSUBSCRIBE at the top, or set your <i>Distance willing to fly one way</i> to 0
-              <a style="color:#0000FF;text-decoration: underline; font-size: 14px; line-height: 16px;" href="{notif_forumUcpUrl}" target="_blank">here</a>
+              <a style="color:#0000FF;text-decoration: underline; font-size: 14px; line-height: 16px;" clicktracking="off" href="{notif_forumUcpUrl}&utm_term=setDistance" target="_blank">here</a>
               </span>
             </p>
           </div>
