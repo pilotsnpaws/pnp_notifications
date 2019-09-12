@@ -101,7 +101,7 @@ function getNextUserForum($maxUserAWS)
 		" city, state, CURRENT_TIMESTAMP, user_inactive_reason " . 
  		" FROM $table_users_details " .
  		" WHERE user_id > $maxUserAWS " .
-		" 	and user_inactive_reason = 0 /* include active only, exclude deactivated users */ " .
+		" 	and user_inactive_reason in (0,1)  /* include active and just-registered only, exclude deactivated users */ " .
  		" ORDER BY user_id LIMIT 100 "; // increase once we know it won't blow up
 	echo "getNextUserForum: $queryNextUserForum" ;
 	newLine();
