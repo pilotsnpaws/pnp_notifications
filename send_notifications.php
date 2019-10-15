@@ -4,7 +4,7 @@
 // this is intended to replace the custom functions_posting.php for distance based notif's only
 // new activity/forum-following notifs will continue to come from the phpbb functionality
 
-//todo - show trip map image - like https://maps.googleapis.com/maps/api/staticmap?size=600x400&path=color:0xff0000ff|weight:5|91406|96150&key=AIzaSyB3rWsXKJiE_1EeDykiqOvwZqOe1gEaEac
+//todo - show trip map image - like https://maps.googleapis.com/maps/api/staticmap?size=600x400&path=color:0xff0000ff|weight:5|91406|96150&key=KEY_HERE
 
 // define the prefix of each log message
 $logType = '[send notif]'; 
