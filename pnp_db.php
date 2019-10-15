@@ -32,7 +32,7 @@ if (!$aws_mysqli) {
 //}
 
 // set SSL using AWS CA
-$aws_mysqli->ssl_set(null,null,'rds-combined-ca-bundle.pem',null,null);
+$aws_mysqli->ssl_set(null,null,'rds-ca-2019-root.pem',null,null);
 $aws_mysqli->options(MYSQLI_CLIENT_SSL, TRUE);
 
 $attemptLimit = 10;
