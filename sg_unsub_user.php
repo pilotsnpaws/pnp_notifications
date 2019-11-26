@@ -1,5 +1,7 @@
 <?php
 
+require 'vendor/autoload.php';
+
 // this checks sendgrid for unsubscribed emails, and sets the user's flying distance to 0
 // todo: decide to deactivate account when unsub'd
 
@@ -20,7 +22,6 @@ echo "Sendgrid API Key: $apiKey";
 newLine();
 newLine();
 
-require 'vendor/autoload.php';
 $sg = new \SendGrid($apiKey);
 
 //  get unsubscribes from sendgrid
