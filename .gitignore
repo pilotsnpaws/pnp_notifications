@@ -3,3 +3,4 @@
 ca_dev/
 vendor/
 settings.php
+.DS_Store

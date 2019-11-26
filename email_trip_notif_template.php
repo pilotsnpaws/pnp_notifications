@@ -187,7 +187,7 @@ $emailBody =
 
                 <img class="right" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;
                 clear: both;display: block;border: 0;height: auto;line-height: 100%;width: 66px;max-width: 66px" align="right" border="0" 
-                src="https://pilotsnpaws.org/notif/images/pnplogo1.png" alt="Pilots N Paws Logo" width="66">
+                src="https://cdn.pilotsnpaws.org/wp/pnplogo1.png" alt="Pilots N Paws Logo" width="66">
             </div>
         </td>
     </tr>

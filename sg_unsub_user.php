@@ -1,6 +1,7 @@
 <?php
 
-require 'vendor/autoload.php';
+// require __DIR__ . '/vendor/autoload.php';
+require 'vendor/autoload.php'; 
 
 // this checks sendgrid for unsubscribed emails, and sets the user's flying distance to 0
 // todo: decide to deactivate account when unsub'd

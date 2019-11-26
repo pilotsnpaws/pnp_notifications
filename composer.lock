@@ -1,11 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "hash": "56c7715ffaf326532f0d785f28b8a665",
-    "content-hash": "e8db9174cc635b56928b0b94d806e7eb",
+    "content-hash": "21c2e1c1bfdf4e3c722b6eeaca347fd5",
     "packages": [
         {
             "name": "sendgrid/php-http-client",
@@ -57,38 +56,47 @@
                 "rest",
                 "sendgrid"
             ],
-            "time": "2018-04-10 18:06:08"
+            "time": "2018-04-10T18:06:08+00:00"
         },
         {
             "name": "sendgrid/sendgrid",
-            "version": "5.6.2",
+            "version": "v7.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sendgrid/sendgrid-php.git",
-                "reference": "bed6a418706b09188fad2755de2e1c231ba74e69"
+                "reference": "883c3b98cace58d08fd4fe09e55f54d35e706eb5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sendgrid/sendgrid-php/zipball/bed6a418706b09188fad2755de2e1c231ba74e69",
-                "reference": "bed6a418706b09188fad2755de2e1c231ba74e69",
+                "url": "https://api.github.com/repos/sendgrid/sendgrid-php/zipball/883c3b98cace58d08fd4fe09e55f54d35e706eb5",
+                "reference": "883c3b98cace58d08fd4fe09e55f54d35e706eb5",
                 "shasum": ""
             },
             "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
                 "php": ">=5.6",
-                "sendgrid/php-http-client": "~3.7"
+                "sendgrid/php-http-client": "~3.9"
             },
             "replace": {
                 "sendgrid/sendgrid-php": "*"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.*",
-                "squizlabs/php_codesniffer": "2.*"
+                "phpunit/phpunit": "^5.7.9 || ^6.4.3",
+                "squizlabs/php_codesniffer": "3.*",
+                "swaggest/json-diff": "^3.4"
             },
             "type": "library",
             "autoload": {
+                "psr-4": {
+                    "SendGrid\\": "lib/",
+                    "SendGrid\\Mail\\": "lib/mail/",
+                    "SendGrid\\Contacts\\": "lib/contacts/",
+                    "SendGrid\\Stats\\": "lib/stats/"
+                },
                 "files": [
-                    "lib/SendGrid.php",
-                    "lib/helpers/mail/Mail.php"
+                    "lib/SendGrid.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -103,7 +111,7 @@
                 "send",
                 "sendgrid"
             ],
-            "time": "2017-06-30 04:48:44"
+            "time": "2018-05-19T16:18:36+00:00"
         },
         {
             "name": "sendgrid/smtpapi",
@@ -154,7 +162,7 @@
                 "smtpapi",
                 "xsmtp"
             ],
-            "time": "2017-07-06 22:11:41"
+            "time": "2017-07-06T22:11:41+00:00"
         }
     ],
     "packages-dev": [],

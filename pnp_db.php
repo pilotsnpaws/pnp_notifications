@@ -18,7 +18,7 @@ if (mysqli_connect_errno($f_mysqli))
 		echo logEvent("Error. Failed to connect to forum MySQL $f_server/$f_database: " . mysqli_connect_error());
 		exit();
   } else {
-		echo nl2br ("Connected to forum database: $f_server/$f_database \n" ) ; 
+		echo logEvent("Connected to forum database: $f_server/$f_database \n" ) ; 
 	} ;
 
 // AWS connection - diff from forum as we want to SSL this traffic
@@ -32,7 +32,7 @@ if (!$aws_mysqli) {
 //}
 
 // set SSL using AWS CA
-$aws_mysqli->ssl_set(null,null,'rds-ca-2019-root.pem',null,null);
+$aws_mysqli->ssl_set(null,null,'/var/www/html/notif/rds-ca-2019-root.pem',null,null);
 $aws_mysqli->options(MYSQLI_CLIENT_SSL, TRUE);
 
 $attemptLimit = 10;
@@ -57,7 +57,7 @@ do {
 $res = $aws_mysqli->query("SHOW STATUS LIKE 'Ssl_cipher';");
 while($row = $res->fetch_array()) {
 	$sslCipher = $row['Value'];
-	$sslExpected = 'DHE-RSA-AES256-SHA';
+	$sslExpected = 'DHE-RSA-AES256-GCM-SHA384';
 	if($sslCipher != $sslExpected) { 
 		echo logEvent("Error. SSL cipher incorrect or missing, expected $sslExpected, got: $sslCipher. Exiting."); 
 		exit();

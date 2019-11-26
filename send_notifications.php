@@ -65,10 +65,10 @@ $tableNotif = 'pnp_trip_notif_status' ; // table that knows if we sent a notif t
 $forum_id = '5' ; // we only care about the trip request forum
 
 // email contents constants (say that five times fast)
-define("topicUrlPrefix","https://pilotsnpaws.org/forum/viewtopic.php?t=");
-define("mapUrlPrefix","https://pilotsnpaws.org/maps/maps_single_trip.php?topic="); //add topicId to end of this to show map
-define("forumUcpUrl","https://pilotsnpaws.org/forum/ucp.php?i=164");
-define("forumTechUrl","https://pilotsnpaws.org/forum/viewforum.php?f=17");
+define("topicUrlPrefix","https://www.pilotsnpaws.org/forum/viewtopic.php?t=");
+define("mapUrlPrefix","https://www.pilotsnpaws.org/maps/maps_single_trip.php?topic="); //add topicId to end of this to show map
+define("forumUcpUrl","https://www.pilotsnpaws.org/forum/ucp.php?i=164");
+define("forumTechUrl","https://www.pilotsnpaws.org/forum/viewforum.php?f=17");
 
 $topicId = getNextTopic();
 
@@ -238,47 +238,48 @@ function buildEmails($topicId, $topicFromToText) {
 					$emailHTMLContent = str_replace("{notif_forumUcpUrl}", forumUcpUrl, $emailHTMLContent) ;
 					$emailHTMLContent = str_replace("{notif_forumTechUrl}", forumTechUrl, $emailHTMLContent) ;
 					$emailHTMLContent = str_replace("{notif_UserTotalDist}", $userDistSend + $userDistRec + $topicDistance , $emailHTMLContent) ;
-					
+
 					// clean up $topicWeight as it comes from forum and has color/bold tags
 					$topicWeight = preg_replace('/\[(.*?)\]/',"",$topicWeight); 
 
 					$emailHTMLContent = str_replace("{notif_topicWeight}", $topicWeight, $emailHTMLContent) ;
 
 					// show email 
-					echo $emailHTMLContent;
+					// echo $emailHTMLContent;
 
-					$mail = new SendGrid\Mail();
+					$mail = new SendGrid\Mail\Mail();
+
+					$topicUrlPrefix = topicUrlPrefix;
 
 					// TODO plain text email? do we even need plain text anymore?
-					$content = new SendGrid\Content("text/plain", "some xtext here");
-					$mail->addContent($content);
+					$mail->addContent("text/plain","This message should be viewed in HTML. To view this on the forum, click here ". $topicUrlPrefix . "/" . $topicId );
 
-					$content = new SendGrid\Content("text/html", $emailHTMLContent);
-					$mail->addContent($content);
+					$mail->addContent("text/html", $emailHTMLContent);
 
-					$from = new SendGrid\Email("Pilots N Paws forum", "forum@pilotsnpaws.org");
-					$mail->setFrom($from);
+					$mail->setFrom("forum@pilotsnpaws.org", "Pilots N Paws forum");
 
-					$personalization = new SendGrid\Personalization();
+					// $personalization = new Personalization();
 					// send to real emails or test? set in settings.php 
 					// this doesnt control if we actually send a message - that is by $sendMailFlag
 					if ($sendMailRecipients) {
-						$email = new SendGrid\Email($userName, $userEmail);
+						$mail->addTo(new SendGrid\Mail\To($userEmail, $userName));
 						$mail->setSubject("PNP New Trip: $topicFromToText");
 					} else {
-						$email = new SendGrid\Email("Mike+$userName", "nekbet+$userName@gmail.com");
+						$mail->addTo(new SendGrid\Mail\To("nekbet+$userName@gmail.com", "Mike+$userName"));
 						$mail->setSubject("[TEST] PNP New Trip: $topicFromToText");
 					}
-					$personalization->addTo($email);
-					$mail->addPersonalization($personalization);
+					// $emailTo->addTo($email);
+					// $mail->addTos($emailTo);
 
+					// for debugging - show the results
+					// echo json_encode($mail, JSON_PRETTY_PRINT);
 
 					// categories, category comes from settings.php
 					// TODO add more data as we can for tracking in emails
 					$mail->addCategory($notificationEmailSendGridCategory);
-					$tracking_settings = new SendGrid\TrackingSettings();
+					$tracking_settings = new SendGrid\Mail\TrackingSettings();
 					// google analytics
-					$ganalytics = new SendGrid\Ganalytics();
+					$ganalytics = new SendGrid\Mail\Ganalytics();
 					$ganalytics->setEnable(true);
 					$ganalytics->setCampaignSource("trip-notification");
 					// // $ganalytics->setCampaignTerm("unused");

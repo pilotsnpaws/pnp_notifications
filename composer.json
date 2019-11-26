@@ -1,8 +1,9 @@
 {
     "minimum-stability" : "dev",
     "require": {
-        "sendgrid/smtpapi": "~0.5",
-		"sendgrid/sendgrid": "~5.0",
-		"ext-mbstring": "*"
+    	"sendgrid/php-http-client": "~3.9.6",
+        "sendgrid/smtpapi": "~0.6",
+	"sendgrid/sendgrid": "~7",
+	"ext-mbstring": "*"
     }
 }
