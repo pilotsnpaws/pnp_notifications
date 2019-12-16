@@ -252,7 +252,7 @@ function buildEmails($topicId, $topicFromToText) {
 					$topicUrlPrefix = topicUrlPrefix;
 
 					// TODO plain text email? do we even need plain text anymore?
-					$mail->addContent("text/plain","This message should be viewed in HTML. To view this on the forum, click here ". $topicUrlPrefix . "/" . $topicId );
+					$mail->addContent("text/plain","This message should be viewed in HTML. To view this on the forum, click here ". $topicUrlPrefix . $topicId );
 
 					$mail->addContent("text/html", $emailHTMLContent);
 
