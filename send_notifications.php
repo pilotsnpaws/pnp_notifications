@@ -336,8 +336,8 @@ function sendMail($mail) {
 	
 	echo "Status code: " . $response->statusCode();
 	newline();
-	echo "Headers: " . $response->headers();
-	newline();
+	// echo "Headers: " . $response->headers();
+	// newline();
 	echo "Body: " . $response->body();
 	newline();
 
