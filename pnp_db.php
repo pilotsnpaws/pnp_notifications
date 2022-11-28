@@ -57,7 +57,7 @@ do {
 $res = $aws_mysqli->query("SHOW STATUS LIKE 'Ssl_cipher';");
 while($row = $res->fetch_array()) {
 	$sslCipher = $row['Value'];
-	$sslExpected = 'DHE-RSA-AES256-GCM-SHA384';
+	$sslExpected = 'ECDHE-RSA-AES256-GCM-SHA384';
 	if($sslCipher != $sslExpected) { 
 		echo logEvent("Error. SSL cipher incorrect or missing, expected $sslExpected, got: $sslCipher. Exiting."); 
 		exit();
